@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 
 class BarangService
 {
@@ -264,14 +268,18 @@ class BarangService
             // Log untuk debugging
             Log::info('Starting QR code generation for barcode: ' . $barang->barcode);
             
-            // Generate QR code as base64
-            $qrCode = QrCode::format('png')
-                ->size(200)
-                ->generate($barang->barcode);
+            // Generate QR code menggunakan SVG backend (tidak memerlukan Imagick)
+            $renderer = new ImageRenderer(
+                new RendererStyle(200),
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+            $qrCodeSvg = $writer->writeString($barang->barcode);
             
-            Log::info('QR code generated successfully, size: ' . strlen($qrCode));
+            // Convert SVG to base64
+            $qrCodeBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
             
-            $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCode);
+            Log::info('QR code generated successfully using SVG backend');
         } catch (Exception $e) {
             // Log error untuk debugging
             Log::error('QR Code generation failed: ' . $e->getMessage());
