@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('{barang}/toggle-status', [BarangController::class, 'toggleStatus']);
         Route::delete('{barang}', [BarangController::class, 'destroy']);
         Route::get('{barang}/qr-code', [BarangController::class, 'generateQrCode']);
+        Route::post('{barang}/generate-qr', [BarangController::class, 'generateQrCode']);
     });
     
     // Optimization - COMING SOON

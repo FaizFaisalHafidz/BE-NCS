@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -260,13 +261,22 @@ class BarangService
         $barang = Barang::findOrFail($id);
         
         try {
+            // Log untuk debugging
+            Log::info('Starting QR code generation for barcode: ' . $barang->barcode);
+            
             // Generate QR code as base64
             $qrCode = QrCode::format('png')
                 ->size(200)
                 ->generate($barang->barcode);
             
+            Log::info('QR code generated successfully, size: ' . strlen($qrCode));
+            
             $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCode);
         } catch (Exception $e) {
+            // Log error untuk debugging
+            Log::error('QR Code generation failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
             // Fallback jika QR code generation gagal
             $qrCodeBase64 = null;
         }
@@ -275,7 +285,8 @@ class BarangService
             'qr_code' => $qrCodeBase64,
             'barcode' => $barang->barcode,
             'kode_barang' => $barang->kode_barang,
-            'nama_barang' => $barang->nama_barang
+            'nama_barang' => $barang->nama_barang,
+            'error' => $qrCodeBase64 === null ? 'QR Code generation failed' : null
         ];
     }
 
