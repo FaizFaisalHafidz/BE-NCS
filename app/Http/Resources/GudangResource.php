@@ -5,37 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @OA\Schema(
- *     schema="Gudang",
- *     type="object",
- *     title="Gudang",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="nama_gudang", type="string", example="Gudang Utama"),
- *     @OA\Property(property="alamat", type="string", example="Jl. Industri No. 123, Jakarta"),
- *     @OA\Property(property="total_kapasitas", type="number", format="float", example=1000.50),
- *     @OA\Property(property="kapasitas_terpakai", type="number", format="float", example=650.25),
- *     @OA\Property(property="sisa_kapasitas", type="number", format="float", example=350.25),
- *     @OA\Property(property="persentase_kapasitas", type="number", format="float", example=65.03),
- *     @OA\Property(property="panjang", type="number", format="float", example=50.00),
- *     @OA\Property(property="lebar", type="number", format="float", example=30.00),
- *     @OA\Property(property="tinggi", type="number", format="float", example=8.00),
- *     @OA\Property(property="aktif", type="boolean", example=true),
- *     @OA\Property(property="jumlah_area", type="integer", example=5),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-01-15T10:30:00.000000Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-01-15T10:30:00.000000Z"),
- *     @OA\Property(
- *         property="area_gudang",
- *         type="array",
- *         @OA\Items(
- *             type="object",
- *             @OA\Property(property="id", type="integer"),
- *             @OA\Property(property="nama_area", type="string"),
- *             @OA\Property(property="kode_area", type="string")
- *         )
- *     )
- * )
- */
 class GudangResource extends JsonResource
 {
     /**

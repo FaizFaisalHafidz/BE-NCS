@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class KategoriBarangResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,14 +16,17 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'nama' => $this->nama,
-            'email' => $this->email,
-            'nomor_telepon' => $this->nomor_telepon,
+            'nama_kategori' => $this->nama_kategori,
+            'kode_kategori' => $this->kode_kategori,
+            'deskripsi' => $this->deskripsi,
             'aktif' => $this->aktif,
-            'role' => $this->getRoleNames()->first(),
-            'permissions' => $this->getAllPermissions()->pluck('name'),
+            'jumlah_barang' => $this->barang_count ?? $this->jumlah_barang ?? 0,
+            'status_text' => $this->aktif ? 'Aktif' : 'Nonaktif',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            
+            // Load relationships when requested
+            'barang' => $this->whenLoaded('barang'),
         ];
     }
 }

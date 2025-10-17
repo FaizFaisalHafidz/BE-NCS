@@ -16,6 +16,735 @@
         }
     ],
     "paths": {
+        "/api/area-gudang": {
+            "get": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Mendapatkan daftar area gudang",
+                "description": "Mengambil daftar semua area gudang dengan pagination dan filter",
+                "operationId": "getAreaGudangList",
+                "parameters": [
+                    {
+                        "name": "gudang_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan ID gudang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jenis_area",
+                        "in": "query",
+                        "description": "Filter berdasarkan jenis area (rak, lantai, khusus)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "rak",
+                                "lantai",
+                                "khusus"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "tersedia",
+                        "in": "query",
+                        "description": "Filter berdasarkan ketersediaan (1=tersedia, 0=tidak tersedia)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian berdasarkan nama area atau kode area",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar area gudang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar area gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/AreaGudang"
+                                                    }
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Membuat area gudang baru",
+                "description": "Membuat data area gudang baru dengan validasi",
+                "operationId": "createAreaGudang",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "gudang_id",
+                                    "kode_area",
+                                    "nama_area",
+                                    "koordinat_x",
+                                    "koordinat_y",
+                                    "panjang",
+                                    "lebar",
+                                    "tinggi",
+                                    "kapasitas",
+                                    "jenis_area"
+                                ],
+                                "properties": {
+                                    "gudang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "kode_area": {
+                                        "type": "string",
+                                        "example": "A1-03"
+                                    },
+                                    "nama_area": {
+                                        "type": "string",
+                                        "example": "Area A1 - Rak Rendah"
+                                    },
+                                    "koordinat_x": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 25
+                                    },
+                                    "koordinat_y": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 5
+                                    },
+                                    "panjang": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "lebar": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 8
+                                    },
+                                    "tinggi": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 3
+                                    },
+                                    "kapasitas": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 240
+                                    },
+                                    "jenis_area": {
+                                        "type": "string",
+                                        "enum": [
+                                            "rak",
+                                            "lantai",
+                                            "khusus"
+                                        ],
+                                        "example": "rak"
+                                    },
+                                    "tersedia": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Area gudang berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Area gudang berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AreaGudang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/area-gudang/{id}": {
+            "get": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Mendapatkan detail area gudang",
+                "description": "Mengambil detail area gudang berdasarkan ID",
+                "operationId": "getAreaGudangDetail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Area Gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail area gudang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail area gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AreaGudang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Area gudang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Update area gudang",
+                "description": "Mengupdate data area gudang",
+                "operationId": "updateAreaGudang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Area Gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "kode_area": {
+                                        "type": "string",
+                                        "example": "A1-03-UPD"
+                                    },
+                                    "nama_area": {
+                                        "type": "string",
+                                        "example": "Area A1 - Rak Rendah Updated"
+                                    },
+                                    "koordinat_x": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 26
+                                    },
+                                    "koordinat_y": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 6
+                                    },
+                                    "panjang": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 12
+                                    },
+                                    "lebar": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 9
+                                    },
+                                    "tinggi": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4
+                                    },
+                                    "kapasitas": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 432
+                                    },
+                                    "jenis_area": {
+                                        "type": "string",
+                                        "enum": [
+                                            "rak",
+                                            "lantai",
+                                            "khusus"
+                                        ],
+                                        "example": "rak"
+                                    },
+                                    "tersedia": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Area gudang berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Area gudang berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AreaGudang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Area gudang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Hapus area gudang",
+                "description": "Menghapus area gudang (soft delete jika memiliki relasi)",
+                "operationId": "deleteAreaGudang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Area Gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Area gudang berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Area gudang berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Tidak dapat menghapus area gudang yang memiliki data terkait"
+                    },
+                    "404": {
+                        "description": "Area gudang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/gudang/{gudang_id}/area-gudang": {
+            "get": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Mendapatkan area gudang berdasarkan gudang",
+                "description": "Mengambil semua area gudang dalam gudang tertentu",
+                "operationId": "getAreaGudangByGudang",
+                "parameters": [
+                    {
+                        "name": "gudang_id",
+                        "in": "path",
+                        "description": "ID Gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "jenis_area",
+                        "in": "query",
+                        "description": "Filter berdasarkan jenis area",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "rak",
+                                "lantai",
+                                "khusus"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Area gudang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Area gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AreaGudang"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Gudang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/area-gudang/stats": {
+            "get": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Mendapatkan statistik area gudang",
+                "description": "Mengambil statistik dan ringkasan data area gudang",
+                "operationId": "getAreaGudangStats",
+                "parameters": [
+                    {
+                        "name": "gudang_id",
+                        "in": "query",
+                        "description": "Filter statistik berdasarkan gudang tertentu",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statistik area gudang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik area gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_area": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "area_tersedia": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "area_tidak_tersedia": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_kapasitas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 2500
+                                                },
+                                                "kapasitas_terpakai": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 1800.5
+                                                },
+                                                "persentase_penggunaan": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 72.02
+                                                },
+                                                "by_jenis": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "jenis": {
+                                                                "type": "string"
+                                                            },
+                                                            "count": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/area-gudang/{id}/toggle-status": {
+            "patch": {
+                "tags": [
+                    "Area Gudang"
+                ],
+                "summary": "Toggle status tersedia area gudang",
+                "description": "Mengubah status tersedia/tidak tersedia area gudang",
+                "operationId": "toggleAreaGudangStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID Area Gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status area gudang berhasil diubah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status area gudang berhasil diubah"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AreaGudang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Area gudang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/auth/login": {
             "post": {
                 "tags": [
@@ -316,6 +1045,870 @@
                 "security": [
                     {
                         "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/barang": {
+            "get": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Daftar barang",
+                "description": "Mengambil daftar barang dengan pagination dan filter",
+                "operationId": "getBarang",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian berdasarkan nama atau kode barang",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "kategori_barang_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan kategori barang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "aktif",
+                        "in": "query",
+                        "description": "Filter berdasarkan status aktif (1/0)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "prioritas",
+                        "in": "query",
+                        "description": "Filter berdasarkan prioritas (rendah/sedang/tinggi)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "rendah",
+                                "sedang",
+                                "tinggi"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "mudah_pecah",
+                        "in": "query",
+                        "description": "Filter barang mudah pecah (1/0)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Barang"
+                                                    }
+                                                },
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Buat barang baru",
+                "description": "Membuat barang baru dengan validasi data dan generate QR code",
+                "operationId": "storeBarang",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_barang",
+                                    "kategori_barang_id",
+                                    "panjang",
+                                    "lebar",
+                                    "tinggi",
+                                    "berat"
+                                ],
+                                "properties": {
+                                    "kode_barang": {
+                                        "type": "string",
+                                        "example": "BRG001"
+                                    },
+                                    "nama_barang": {
+                                        "type": "string",
+                                        "example": "Laptop Acer Aspire 5"
+                                    },
+                                    "kategori_barang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "panjang": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 35.6
+                                    },
+                                    "lebar": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 25.4
+                                    },
+                                    "tinggi": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2.3
+                                    },
+                                    "berat": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1.8
+                                    },
+                                    "mudah_pecah": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "prioritas": {
+                                        "type": "string",
+                                        "enum": [
+                                            "rendah",
+                                            "sedang",
+                                            "tinggi"
+                                        ],
+                                        "example": "sedang"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Laptop untuk kebutuhan kantor"
+                                    },
+                                    "aktif": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Barang berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/{id}": {
+            "get": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Detail barang",
+                "description": "Mengambil detail barang berdasarkan ID",
+                "operationId": "showBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Update barang",
+                "description": "Mengupdate data barang",
+                "operationId": "updateBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama_barang": {
+                                        "type": "string",
+                                        "example": "Laptop Acer Aspire 5 Updated"
+                                    },
+                                    "kategori_barang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "panjang": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 36
+                                    },
+                                    "lebar": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 26
+                                    },
+                                    "tinggi": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2.5
+                                    },
+                                    "berat": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2
+                                    },
+                                    "mudah_pecah": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "prioritas": {
+                                        "type": "string",
+                                        "enum": [
+                                            "rendah",
+                                            "sedang",
+                                            "tinggi"
+                                        ],
+                                        "example": "tinggi"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Laptop untuk kebutuhan kantor yang sudah diupdate"
+                                    },
+                                    "aktif": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Barang berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Hapus barang",
+                "description": "Menghapus barang (soft delete jika masih ada penempatan)",
+                "operationId": "deleteBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Barang berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "409": {
+                        "description": "Barang masih memiliki penempatan aktif"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/{id}/toggle-status": {
+            "patch": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Toggle status aktif barang",
+                "description": "Mengubah status aktif/nonaktif barang",
+                "operationId": "toggleBarangStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status barang berhasil diubah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status barang berhasil diubah"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/stats": {
+            "get": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Statistik barang",
+                "description": "Mengambil statistik barang",
+                "operationId": "getBarangStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistik barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_barang": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "barang_aktif": {
+                                                    "type": "integer",
+                                                    "example": 120
+                                                },
+                                                "barang_nonaktif": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "barang_mudah_pecah": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "total_volume": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 125.75
+                                                },
+                                                "by_kategori": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "kategori_id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "nama_kategori": {
+                                                                "type": "string"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "by_prioritas": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "prioritas": {
+                                                                "type": "string"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/scan": {
+            "post": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Scan QR Code barang",
+                "description": "Melakukan scan QR code untuk mendapatkan informasi barang",
+                "operationId": "scanBarang",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "barcode"
+                                ],
+                                "properties": {
+                                    "barcode": {
+                                        "type": "string",
+                                        "example": "BRG001-QR123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Barang ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang ditemukan"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/search-by-code": {
+            "get": {
+                "tags": [
+                    "Barang Management"
+                ],
+                "summary": "Search barang by kode_barang (manual fallback)",
+                "description": "Mencari barang berdasarkan kode barang manual sebagai fallback ketika QR scan bermasalah",
+                "operationId": "searchBarangByCode",
+                "parameters": [
+                    {
+                        "name": "kode_barang",
+                        "in": "query",
+                        "description": "Kode barang yang dicari",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "ELK-001"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Barang ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang berhasil ditemukan"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Barang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parameter kode_barang diperlukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Parameter kode_barang diperlukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Barang dengan kode ELK-001 tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/barang/{id}/qr-code": {
+            "get": {
+                "tags": [
+                    "Barang"
+                ],
+                "summary": "Generate QR Code barang",
+                "description": "Generate QR code untuk barang tertentu",
+                "operationId": "generateQrCode",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "QR Code berhasil digenerate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "QR Code berhasil digenerate"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "qr_code": {
+                                                    "type": "string",
+                                                    "example": "data:image/png;base64,iVBORw0KGgoAAAANS..."
+                                                },
+                                                "barcode": {
+                                                    "type": "string",
+                                                    "example": "BRG001-QR123456"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
                     }
                 ]
             }
@@ -869,6 +2462,581 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori-barang": {
+            "get": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Daftar kategori barang",
+                "description": "Mengambil daftar kategori barang dengan pagination dan filter",
+                "operationId": "getKategoriBarang",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian berdasarkan nama atau kode kategori",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "aktif",
+                        "in": "query",
+                        "description": "Filter berdasarkan status aktif (1/0)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar kategori barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar kategori barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/KategoriBarang"
+                                                    }
+                                                },
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "from": {
+                                                    "type": "integer"
+                                                },
+                                                "to": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Buat kategori barang baru",
+                "description": "Membuat kategori barang baru dengan validasi data",
+                "operationId": "storeKategoriBarang",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_kategori",
+                                    "kode_kategori"
+                                ],
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string",
+                                        "example": "Elektronik"
+                                    },
+                                    "kode_kategori": {
+                                        "type": "string",
+                                        "example": "ELK"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Kategori untuk barang elektronik"
+                                    },
+                                    "aktif": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Kategori barang berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori barang berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriBarang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori-barang/{id}": {
+            "get": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Detail kategori barang",
+                "description": "Mengambil detail kategori barang berdasarkan ID",
+                "operationId": "showKategoriBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail kategori barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail kategori barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriBarang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kategori barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Update kategori barang",
+                "description": "Mengupdate data kategori barang",
+                "operationId": "updateKategoriBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama_kategori": {
+                                        "type": "string",
+                                        "example": "Elektronik Updated"
+                                    },
+                                    "kode_kategori": {
+                                        "type": "string",
+                                        "example": "ELK-UPD"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Kategori untuk barang elektronik yang sudah diupdate"
+                                    },
+                                    "aktif": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kategori barang berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori barang berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriBarang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "404": {
+                        "description": "Kategori barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Hapus kategori barang",
+                "description": "Menghapus kategori barang (soft delete jika masih digunakan)",
+                "operationId": "deleteKategoriBarang",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kategori barang berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kategori barang berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kategori barang tidak ditemukan"
+                    },
+                    "409": {
+                        "description": "Kategori barang masih digunakan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori-barang/{id}/toggle-status": {
+            "patch": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Toggle status aktif kategori barang",
+                "description": "Mengubah status aktif/nonaktif kategori barang",
+                "operationId": "toggleKategoriBarangStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategori barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status kategori barang berhasil diubah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status kategori barang berhasil diubah"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/KategoriBarang"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kategori barang tidak ditemukan"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori-barang/stats": {
+            "get": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Statistik kategori barang",
+                "description": "Mengambil statistik kategori barang",
+                "operationId": "getKategoriBarangStats",
+                "responses": {
+                    "200": {
+                        "description": "Statistik kategori barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik kategori barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_kategori": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "kategori_aktif": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "kategori_nonaktif": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_barang_per_kategori": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "kategori_terpopuler": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "nama_kategori": {
+                                                                "type": "string"
+                                                            },
+                                                            "jumlah_barang": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/kategori-barang/aktif": {
+            "get": {
+                "tags": [
+                    "Kategori Barang"
+                ],
+                "summary": "Daftar kategori barang aktif",
+                "description": "Mengambil daftar kategori barang yang aktif untuk dropdown",
+                "operationId": "getActiveKategoriBarang",
+                "responses": {
+                    "200": {
+                        "description": "Daftar kategori barang aktif berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar kategori barang aktif berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "nama_kategori": {
+                                                        "type": "string"
+                                                    },
+                                                    "kode_kategori": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
@@ -1530,8 +3698,53 @@
     },
     "components": {
         "schemas": {
+            "User": {
+                "title": "User",
+                "description": "Model user",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john@example.com"
+                    },
+                    "aktif": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "admin"
+                    },
+                    "status_text": {
+                        "type": "string",
+                        "example": "Aktif"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Gudang": {
                 "title": "Gudang",
+                "description": "Model gudang",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -1543,124 +3756,323 @@
                     },
                     "alamat": {
                         "type": "string",
-                        "example": "Jl. Industri No. 123, Jakarta"
+                        "example": "Jl. Sudirman No. 123"
                     },
-                    "total_kapasitas": {
+                    "koordinat_x": {
                         "type": "number",
                         "format": "float",
-                        "example": 1000.5
+                        "example": 106.8456
                     },
-                    "kapasitas_terpakai": {
+                    "koordinat_y": {
                         "type": "number",
                         "format": "float",
-                        "example": 650.25
-                    },
-                    "sisa_kapasitas": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 350.25
-                    },
-                    "persentase_kapasitas": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 65.03
+                        "example": -6.2088
                     },
                     "panjang": {
                         "type": "number",
                         "format": "float",
-                        "example": 50
+                        "example": 100.5
                     },
                     "lebar": {
                         "type": "number",
                         "format": "float",
-                        "example": 30
+                        "example": 80
                     },
                     "tinggi": {
                         "type": "number",
                         "format": "float",
-                        "example": 8
+                        "example": 15
                     },
                     "aktif": {
                         "type": "boolean",
                         "example": true
                     },
+                    "kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 120600
+                    },
+                    "kapasitas_terpakai": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 45200
+                    },
+                    "sisa_kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 75400
+                    },
+                    "persentase_kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 37.5
+                    },
                     "jumlah_area": {
                         "type": "integer",
-                        "example": 5
+                        "example": 12
+                    },
+                    "area_tersedia": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "status_text": {
+                        "type": "string",
+                        "example": "Aktif"
+                    },
+                    "dimensi": {
+                        "type": "string",
+                        "example": "100.5 x 80.0 x 15.0 m"
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-01-15T10:30:00.000000Z"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2025-01-15T10:30:00.000000Z"
-                    },
-                    "area_gudang": {
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "integer"
-                                },
-                                "nama_area": {
-                                    "type": "string"
-                                },
-                                "kode_area": {
-                                    "type": "string"
-                                }
-                            },
-                            "type": "object"
-                        }
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
             },
-            "User": {
-                "title": "User",
-                "description": "User model",
+            "AreaGudang": {
+                "title": "Area Gudang",
+                "description": "Model area gudang",
                 "properties": {
                     "id": {
                         "type": "integer",
                         "example": 1
                     },
-                    "nama": {
-                        "type": "string",
-                        "example": "Supervisor NCS"
+                    "gudang_id": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "email": {
+                    "kode_area": {
                         "type": "string",
-                        "example": "supervisor@ncs.com"
+                        "example": "A1-01"
                     },
-                    "nomor_telepon": {
+                    "nama_area": {
                         "type": "string",
-                        "example": "081234567890"
+                        "example": "Area A1 - Rak Utama"
+                    },
+                    "koordinat_x": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10.5
+                    },
+                    "koordinat_y": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5
+                    },
+                    "panjang": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 8
+                    },
+                    "lebar": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 6
+                    },
+                    "tinggi": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 4
+                    },
+                    "jenis_area": {
+                        "type": "string",
+                        "enum": [
+                            "rak",
+                            "lantai",
+                            "khusus"
+                        ],
+                        "example": "rak"
+                    },
+                    "tersedia": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 192
+                    },
+                    "kapasitas_terpakai": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 45
+                    },
+                    "sisa_kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 147
+                    },
+                    "persentase_kapasitas": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 23.4
+                    },
+                    "status_text": {
+                        "type": "string",
+                        "example": "Tersedia"
+                    },
+                    "jenis_text": {
+                        "type": "string",
+                        "example": "Rak"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "gudang": {
+                        "$ref": "#/components/schemas/Gudang"
+                    }
+                },
+                "type": "object"
+            },
+            "KategoriBarang": {
+                "title": "Kategori Barang",
+                "description": "Model kategori barang",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nama_kategori": {
+                        "type": "string",
+                        "example": "Elektronik"
+                    },
+                    "kode_kategori": {
+                        "type": "string",
+                        "example": "ELK"
+                    },
+                    "deskripsi": {
+                        "type": "string",
+                        "example": "Kategori untuk barang elektronik"
                     },
                     "aktif": {
                         "type": "boolean",
                         "example": true
                     },
-                    "role": {
-                        "type": "string",
-                        "example": "supervisor"
+                    "jumlah_barang": {
+                        "type": "integer",
+                        "example": 25
                     },
-                    "permissions": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
+                    "status_text": {
+                        "type": "string",
+                        "example": "Aktif"
                     },
                     "created_at": {
                         "type": "string",
-                        "format": "datetime",
-                        "example": "2025-10-16T10:43:56.000000Z"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "datetime",
-                        "example": "2025-10-16T10:43:56.000000Z"
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Barang": {
+                "title": "Barang",
+                "description": "Model barang",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "kode_barang": {
+                        "type": "string",
+                        "example": "BRG001"
+                    },
+                    "nama_barang": {
+                        "type": "string",
+                        "example": "Laptop Acer Aspire 5"
+                    },
+                    "kategori_barang_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "panjang": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 35.6
+                    },
+                    "lebar": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.4
+                    },
+                    "tinggi": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 2.3
+                    },
+                    "berat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1.8
+                    },
+                    "mudah_pecah": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "prioritas": {
+                        "type": "string",
+                        "enum": [
+                            "rendah",
+                            "sedang",
+                            "tinggi"
+                        ],
+                        "example": "sedang"
+                    },
+                    "deskripsi": {
+                        "type": "string",
+                        "example": "Laptop untuk kebutuhan kantor"
+                    },
+                    "barcode": {
+                        "type": "string",
+                        "example": "BRG001-QR123456"
+                    },
+                    "aktif": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "volume": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.002068
+                    },
+                    "total_stok": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "dimensi": {
+                        "type": "string",
+                        "example": "35.6 x 25.4 x 2.3 cm"
+                    },
+                    "prioritas_text": {
+                        "type": "string",
+                        "example": "Sedang"
+                    },
+                    "status_text": {
+                        "type": "string",
+                        "example": "Aktif"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "kategori_barang": {
+                        "$ref": "#/components/schemas/KategoriBarang"
                     }
                 },
                 "type": "object"
@@ -1676,12 +4088,28 @@
     },
     "tags": [
         {
+            "name": "Area Gudang",
+            "description": "API Endpoints untuk mengelola area dalam gudang"
+        },
+        {
+            "name": "Barang",
+            "description": "API endpoints untuk manajemen barang"
+        },
+        {
             "name": "Gudang",
             "description": "API Endpoints untuk mengelola gudang"
         },
         {
+            "name": "Kategori Barang",
+            "description": "API endpoints untuk manajemen kategori barang"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Barang Management",
+            "description": "Barang Management"
         },
         {
             "name": "Users",

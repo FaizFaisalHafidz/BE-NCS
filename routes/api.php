@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\GudangController;
-// use App\Http\Controllers\Api\BarangController;
+use App\Http\Controllers\Api\AreaGudangController;
+use App\Http\Controllers\Api\KategoriBarangController;
+use App\Http\Controllers\Api\BarangController;
 // use App\Http\Controllers\Api\OptimizationController;
 // use App\Http\Controllers\Api\AnalyticsController;
 
@@ -43,17 +45,47 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('{gudang}', [GudangController::class, 'update']);
         Route::patch('{gudang}/toggle-status', [GudangController::class, 'toggleStatus']);
         Route::delete('{gudang}', [GudangController::class, 'destroy']);
+        
+        // Area Gudang nested routes
+        Route::get('{gudang}/area-gudang', [AreaGudangController::class, 'byGudang']);
     });
     
-    // Items - COMING SOON
-    /*
-    Route::prefix('items')->group(function () {
+    // Area Gudang Management
+    Route::prefix('area-gudang')->group(function () {
+        Route::get('/', [AreaGudangController::class, 'index']);
+        Route::post('/', [AreaGudangController::class, 'store']);
+        Route::get('stats', [AreaGudangController::class, 'stats']);
+        Route::get('{areaGudang}', [AreaGudangController::class, 'show']);
+        Route::put('{areaGudang}', [AreaGudangController::class, 'update']);
+        Route::patch('{areaGudang}/toggle-status', [AreaGudangController::class, 'toggleStatus']);
+        Route::delete('{areaGudang}', [AreaGudangController::class, 'destroy']);
+    });
+    
+    // Kategori Barang Management
+    Route::prefix('kategori-barang')->group(function () {
+        Route::get('/', [KategoriBarangController::class, 'index']);
+        Route::post('/', [KategoriBarangController::class, 'store']);
+        Route::get('stats', [KategoriBarangController::class, 'stats']);
+        Route::get('aktif', [KategoriBarangController::class, 'getActive']);
+        Route::get('{kategoriBarang}', [KategoriBarangController::class, 'show']);
+        Route::put('{kategoriBarang}', [KategoriBarangController::class, 'update']);
+        Route::patch('{kategoriBarang}/toggle-status', [KategoriBarangController::class, 'toggleStatus']);
+        Route::delete('{kategoriBarang}', [KategoriBarangController::class, 'destroy']);
+    });
+    
+    // Barang Management
+    Route::prefix('barang')->group(function () {
         Route::get('/', [BarangController::class, 'index']);
         Route::post('/', [BarangController::class, 'store']);
-        Route::get('{id}/location', [BarangController::class, 'location']);
+        Route::get('stats', [BarangController::class, 'stats']);
         Route::post('scan', [BarangController::class, 'scan']);
+        Route::get('search-by-code', [BarangController::class, 'searchByCode']);
+        Route::get('{barang}', [BarangController::class, 'show']);
+        Route::put('{barang}', [BarangController::class, 'update']);
+        Route::patch('{barang}/toggle-status', [BarangController::class, 'toggleStatus']);
+        Route::delete('{barang}', [BarangController::class, 'destroy']);
+        Route::get('{barang}/qr-code', [BarangController::class, 'generateQrCode']);
     });
-    */
     
     // Optimization - COMING SOON
     /*
