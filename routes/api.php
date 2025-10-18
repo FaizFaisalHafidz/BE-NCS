@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\GudangController;
 use App\Http\Controllers\Api\AreaGudangController;
 use App\Http\Controllers\Api\KategoriBarangController;
 use App\Http\Controllers\Api\BarangController;
+use App\Http\Controllers\Api\PenempatanBarangController;
 // use App\Http\Controllers\Api\OptimizationController;
 // use App\Http\Controllers\Api\AnalyticsController;
 
@@ -86,6 +87,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{barang}', [BarangController::class, 'destroy']);
         Route::get('{barang}/qr-code', [BarangController::class, 'generateQrCode']);
         Route::post('{barang}/generate-qr', [BarangController::class, 'generateQrCode']);
+    });
+    
+    // Penempatan Barang Management
+    Route::prefix('penempatan-barang')->group(function () {
+        Route::get('/', [PenempatanBarangController::class, 'index']);
+        Route::post('/', [PenempatanBarangController::class, 'store']);
+        Route::get('kadaluarsa', [PenempatanBarangController::class, 'barangKadaluarsa']);
+        Route::get('area/{areaId}/kapasitas', [PenempatanBarangController::class, 'checkKapasitasArea']);
+        Route::get('barang/{barangId}/histori', [PenempatanBarangController::class, 'historiPenempatan']);
+        Route::get('{id}', [PenempatanBarangController::class, 'show']);
+        Route::put('{id}', [PenempatanBarangController::class, 'update']);
+        Route::delete('{id}', [PenempatanBarangController::class, 'destroy']);
     });
     
     // Optimization - COMING SOON

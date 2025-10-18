@@ -3046,6 +3046,678 @@
                 ]
             }
         },
+        "/api/penempatan-barang": {
+            "get": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Daftar penempatan barang",
+                "description": "Mengambil daftar penempatan barang dengan pagination dan filter",
+                "operationId": "b56750b816d97500f58df002476e8e83",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "gudang_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan gudang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "area_gudang_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan area gudang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "ditempatkan",
+                                "direservasi",
+                                "diambil"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian berdasarkan kode/nama barang",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar penempatan barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar penempatan barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "gudang_id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "area_gudang_id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "barang_id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer"
+                                                            },
+                                                            "tanggal_penempatan": {
+                                                                "type": "string",
+                                                                "format": "datetime"
+                                                            },
+                                                            "tanggal_kadaluarsa": {
+                                                                "type": "string",
+                                                                "format": "datetime"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "keterangan": {
+                                                                "type": "string"
+                                                            },
+                                                            "total_volume": {
+                                                                "type": "number"
+                                                            },
+                                                            "is_kadaluarsa": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "gudang": {
+                                                                "type": "object"
+                                                            },
+                                                            "area_gudang": {
+                                                                "type": "object"
+                                                            },
+                                                            "barang": {
+                                                                "type": "object"
+                                                            },
+                                                            "dibuat_oleh": {
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Buat penempatan barang baru",
+                "description": "Membuat penempatan barang baru dengan validasi kapasitas area",
+                "operationId": "c531370368850dbad60bdd9eea5f6957",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "gudang_id",
+                                    "area_gudang_id",
+                                    "barang_id",
+                                    "jumlah",
+                                    "tanggal_penempatan"
+                                ],
+                                "properties": {
+                                    "gudang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "area_gudang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "barang_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "jumlah": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "tanggal_penempatan": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-10-18"
+                                    },
+                                    "tanggal_kadaluarsa": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ditempatkan",
+                                            "direservasi"
+                                        ],
+                                        "example": "ditempatkan"
+                                    },
+                                    "keterangan": {
+                                        "type": "string",
+                                        "example": "Penempatan barang elektronik"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Penempatan barang berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penempatan barang berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penempatan-barang/{id}": {
+            "get": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Detail penempatan barang",
+                "description": "Mengambil detail penempatan barang berdasarkan ID",
+                "operationId": "e2a7dc39ed74173cbca5e781676131c4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID penempatan barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail penempatan barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail penempatan barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Penempatan barang tidak ditemukan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Update penempatan barang",
+                "description": "Mengupdate data penempatan barang",
+                "operationId": "b9202a0edee5f3129522fcb9c3675917",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID penempatan barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jumlah": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "tanggal_kadaluarsa": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-31"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ditempatkan",
+                                            "direservasi",
+                                            "diambil"
+                                        ],
+                                        "example": "diambil"
+                                    },
+                                    "keterangan": {
+                                        "type": "string",
+                                        "example": "Update keterangan penempatan"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Penempatan barang berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penempatan barang berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Hapus penempatan barang",
+                "description": "Menghapus data penempatan barang",
+                "operationId": "7725b6ad312708d809875de3cd26b42a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID penempatan barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Penempatan barang berhasil dihapus",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Penempatan barang berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penempatan-barang/area/{areaId}/kapasitas": {
+            "get": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Cek kapasitas area gudang",
+                "description": "Mengecek kapasitas tersisa di area gudang tertentu",
+                "operationId": "f8001ca13f248ecc37a59fe37e194884",
+                "parameters": [
+                    {
+                        "name": "areaId",
+                        "in": "path",
+                        "description": "ID area gudang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informasi kapasitas area berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Informasi kapasitas area berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "area_gudang": {
+                                                    "type": "object"
+                                                },
+                                                "kapasitas_total": {
+                                                    "type": "number"
+                                                },
+                                                "volume_terpakai": {
+                                                    "type": "number"
+                                                },
+                                                "volume_tersisa": {
+                                                    "type": "number"
+                                                },
+                                                "persentase_penggunaan": {
+                                                    "type": "number"
+                                                },
+                                                "total_barang": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penempatan-barang/barang/{barangId}/histori": {
+            "get": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Histori penempatan barang",
+                "description": "Mengambil histori penempatan untuk barang tertentu",
+                "operationId": "82d772683053c26d554f4086621f59a1",
+                "parameters": [
+                    {
+                        "name": "barangId",
+                        "in": "path",
+                        "description": "ID barang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histori penempatan barang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Histori penempatan barang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "gudang": {
+                                                        "type": "object"
+                                                    },
+                                                    "area_gudang": {
+                                                        "type": "object"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "tanggal_penempatan": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/penempatan-barang/kadaluarsa": {
+            "get": {
+                "tags": [
+                    "Penempatan Barang"
+                ],
+                "summary": "Barang mendekati kadaluarsa",
+                "description": "Mengambil daftar penempatan barang yang mendekati tanggal kadaluarsa",
+                "operationId": "b8688640c1b2909d8a977afda7c2d453",
+                "parameters": [
+                    {
+                        "name": "hari",
+                        "in": "query",
+                        "description": "Jumlah hari sebelum kadaluarsa (default: 7)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Daftar barang mendekati kadaluarsa berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar barang mendekati kadaluarsa berhasil diambil"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "barang": {
+                                                        "type": "object"
+                                                    },
+                                                    "tanggal_kadaluarsa": {
+                                                        "type": "string"
+                                                    },
+                                                    "hari_tersisa": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -4102,6 +4774,10 @@
         {
             "name": "Kategori Barang",
             "description": "API endpoints untuk manajemen kategori barang"
+        },
+        {
+            "name": "Penempatan Barang",
+            "description": "API endpoints untuk manajemen penempatan barang"
         },
         {
             "name": "Authentication",
