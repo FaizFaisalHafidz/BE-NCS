@@ -36,8 +36,8 @@ class UpdateAreaGudangRequest extends FormRequest
                 })->ignore($areaId)
             ],
             'nama_area' => 'sometimes|string|max:255',
-            'koordinat_x' => 'sometimes|numeric|min:0|max:9999.99',
-            'koordinat_y' => 'sometimes|numeric|min:0|max:9999.99',
+            'koordinat_x' => 'sometimes|numeric|min:-180|max:180',
+            'koordinat_y' => 'sometimes|numeric|min:-90|max:90',
             'panjang' => 'sometimes|numeric|min:0.01|max:9999.99',
             'lebar' => 'sometimes|numeric|min:0.01|max:9999.99',
             'tinggi' => 'sometimes|numeric|min:0.01|max:999.99',
@@ -61,12 +61,12 @@ class UpdateAreaGudangRequest extends FormRequest
             'nama_area.max' => 'Nama area maksimal 255 karakter.',
             
             'koordinat_x.numeric' => 'Koordinat X harus berupa angka.',
-            'koordinat_x.min' => 'Koordinat X minimal 0.',
-            'koordinat_x.max' => 'Koordinat X maksimal 9,999.99.',
+            'koordinat_x.min' => 'Koordinat X minimal -180 (longitude).',
+            'koordinat_x.max' => 'Koordinat X maksimal 180 (longitude).',
             
             'koordinat_y.numeric' => 'Koordinat Y harus berupa angka.',
-            'koordinat_y.min' => 'Koordinat Y minimal 0.',
-            'koordinat_y.max' => 'Koordinat Y maksimal 9,999.99.',
+            'koordinat_y.min' => 'Koordinat Y minimal -90 (latitude).',
+            'koordinat_y.max' => 'Koordinat Y maksimal 90 (latitude).',
             
             'panjang.numeric' => 'Panjang area harus berupa angka.',
             'panjang.min' => 'Panjang area minimal 0.01.',

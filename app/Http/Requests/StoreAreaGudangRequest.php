@@ -33,8 +33,8 @@ class StoreAreaGudangRequest extends FormRequest
                 })
             ],
             'nama_area' => 'required|string|max:255',
-            'koordinat_x' => 'required|numeric|min:0|max:9999.99',
-            'koordinat_y' => 'required|numeric|min:0|max:9999.99',
+            'koordinat_x' => 'required|numeric|min:-180|max:180',
+            'koordinat_y' => 'required|numeric|min:-90|max:90',
             'panjang' => 'required|numeric|min:0.01|max:9999.99',
             'lebar' => 'required|numeric|min:0.01|max:9999.99',
             'tinggi' => 'required|numeric|min:0.01|max:999.99',
@@ -65,13 +65,13 @@ class StoreAreaGudangRequest extends FormRequest
             
             'koordinat_x.required' => 'Koordinat X wajib diisi.',
             'koordinat_x.numeric' => 'Koordinat X harus berupa angka.',
-            'koordinat_x.min' => 'Koordinat X minimal 0.',
-            'koordinat_x.max' => 'Koordinat X maksimal 9,999.99.',
+            'koordinat_x.min' => 'Koordinat X minimal -180 (longitude).',
+            'koordinat_x.max' => 'Koordinat X maksimal 180 (longitude).',
             
             'koordinat_y.required' => 'Koordinat Y wajib diisi.',
             'koordinat_y.numeric' => 'Koordinat Y harus berupa angka.',
-            'koordinat_y.min' => 'Koordinat Y minimal 0.',
-            'koordinat_y.max' => 'Koordinat Y maksimal 9,999.99.',
+            'koordinat_y.min' => 'Koordinat Y minimal -90 (latitude).',
+            'koordinat_y.max' => 'Koordinat Y maksimal 90 (latitude).',
             
             'panjang.required' => 'Panjang area wajib diisi.',
             'panjang.numeric' => 'Panjang area harus berupa angka.',
