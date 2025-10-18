@@ -316,16 +316,22 @@ class AreaGudangService
      */
     private function validateAreaCoordinates(array $data, int $excludeId = null): void
     {
-        $koordinatX = $data['koordinat_x'];
-        $koordinatY = $data['koordinat_y'];
-        $panjang = $data['panjang'];
-        $lebar = $data['lebar'];
-        $gudangId = $data['gudang_id'] ?? null;
-        
-        // If gudang_id not in data (update case), get from existing record
-        if (!$gudangId && $excludeId) {
+        // Get existing area data if this is an update
+        $existingArea = null;
+        if ($excludeId) {
             $existingArea = AreaGudang::find($excludeId);
-            $gudangId = $existingArea->gudang_id;
+        }
+        
+        // Use provided data or fall back to existing values
+        $koordinatX = $data['koordinat_x'] ?? ($existingArea ? $existingArea->koordinat_x : null);
+        $koordinatY = $data['koordinat_y'] ?? ($existingArea ? $existingArea->koordinat_y : null);
+        $panjang = $data['panjang'] ?? ($existingArea ? $existingArea->panjang : null);
+        $lebar = $data['lebar'] ?? ($existingArea ? $existingArea->lebar : null);
+        $gudangId = $data['gudang_id'] ?? ($existingArea ? $existingArea->gudang_id : null);
+        
+        // Skip validation if required data is not available
+        if (!$koordinatX || !$koordinatY || !$panjang || !$lebar || !$gudangId) {
+            return;
         }
 
         // Calculate boundaries
