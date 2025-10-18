@@ -3046,6 +3046,1196 @@
                 ]
             }
         },
+        "/api/log-optimasi": {
+            "get": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Get optimization logs",
+                "description": "Returns paginated list of optimization logs with filtering options",
+                "operationId": "getOptimizationLogs",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by optimization status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "sedang_berjalan",
+                                "selesai",
+                                "gagal",
+                                "dibatalkan"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "algoritma",
+                        "in": "query",
+                        "description": "Filter by algorithm type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Simulated Annealing"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Optimization logs retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log optimasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
+                                                            "algoritma": {
+                                                                "type": "string",
+                                                                "example": "Simulated Annealing"
+                                                            },
+                                                            "parameter_optimasi": {
+                                                                "type": "string",
+                                                                "example": "{\"gudang_ids\":[1],\"barang_ids\":[1,2,3]}"
+                                                            },
+                                                            "target_optimasi": {
+                                                                "type": "string",
+                                                                "example": "Optimisasi penempatan barang di ruang gudang"
+                                                            },
+                                                            "estimasi_waktu": {
+                                                                "type": "integer",
+                                                                "example": 300
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "selesai"
+                                                            },
+                                                            "waktu_mulai": {
+                                                                "type": "string",
+                                                                "example": "2025-10-18T13:15:31.000000Z"
+                                                            },
+                                                            "waktu_selesai": {
+                                                                "type": "string",
+                                                                "example": "2025-10-18T20:15:31.000000Z",
+                                                                "nullable": true
+                                                            },
+                                                            "hasil_optimasi": {
+                                                                "type": "object",
+                                                                "nullable": true
+                                                            },
+                                                            "dibuat_oleh": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Create new optimization log",
+                "description": "Creates a new optimization log entry",
+                "operationId": "createOptimizationLog",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "algoritma",
+                                    "parameter_optimasi",
+                                    "target_optimasi"
+                                ],
+                                "properties": {
+                                    "algoritma": {
+                                        "description": "Algorithm name",
+                                        "type": "string",
+                                        "example": "Simulated Annealing"
+                                    },
+                                    "parameter_optimasi": {
+                                        "description": "JSON string of optimization parameters",
+                                        "type": "string",
+                                        "example": "{\\\"gudang_ids\\\":[1],\\\"barang_ids\\\":[1,2,3]}"
+                                    },
+                                    "target_optimasi": {
+                                        "description": "Optimization objective description",
+                                        "type": "string",
+                                        "example": "Optimisasi penempatan barang di ruang gudang"
+                                    },
+                                    "estimasi_waktu": {
+                                        "description": "Estimated execution time in seconds",
+                                        "type": "integer",
+                                        "example": 300
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Optimization log created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log optimasi berhasil dibuat"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 13
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "parameter_optimasi": {
+                                                    "type": "string",
+                                                    "example": "{\\\"gudang_ids\\\":[1]}"
+                                                },
+                                                "target_optimasi": {
+                                                    "type": "string",
+                                                    "example": "Optimisasi penempatan barang"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "sedang_berjalan"
+                                                },
+                                                "waktu_mulai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T13:22:01.000000Z"
+                                                },
+                                                "dibuat_oleh": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/log-optimasi/{logOptimasi}": {
+            "get": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Get specific optimization log details",
+                "description": "Returns detailed information about a specific optimization log including related recommendations",
+                "operationId": "getOptimizationLog",
+                "parameters": [
+                    {
+                        "name": "logOptimasi",
+                        "in": "path",
+                        "description": "Optimization log ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Optimization log details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail log optimasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "parameter_optimasi": {
+                                                    "type": "string",
+                                                    "example": "{\\\"gudang_ids\\\":[1],\\\"barang_ids\\\":[1,2,3]}"
+                                                },
+                                                "target_optimasi": {
+                                                    "type": "string",
+                                                    "example": "Optimisasi penempatan barang di ruang gudang"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "selesai"
+                                                },
+                                                "waktu_mulai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T13:15:31.000000Z"
+                                                },
+                                                "waktu_selesai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T20:15:31.000000Z",
+                                                    "nullable": true
+                                                },
+                                                "hasil_optimasi": {
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "metrik_hasil": {
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "rekomendasi_penempatan": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 30
+                                                            },
+                                                            "barang_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "area_gudang_rekomendasi": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "koordinat_x_spesifik": {
+                                                                "type": "number",
+                                                                "example": 30.76
+                                                            },
+                                                            "koordinat_y_spesifik": {
+                                                                "type": "number",
+                                                                "example": 9.65
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "menunggu"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Optimization log not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Update optimization log",
+                "description": "Updates optimization log status and results",
+                "operationId": "updateOptimizationLog",
+                "parameters": [
+                    {
+                        "name": "logOptimasi",
+                        "in": "path",
+                        "description": "Optimization log ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "sedang_berjalan",
+                                            "selesai",
+                                            "gagal",
+                                            "dibatalkan"
+                                        ],
+                                        "example": "selesai"
+                                    },
+                                    "hasil_optimasi": {
+                                        "description": "JSON string of optimization results",
+                                        "type": "string",
+                                        "example": "{\\\"final_cost\\\":15047.02,\\\"total_items\\\":6}"
+                                    },
+                                    "metrik_hasil": {
+                                        "description": "JSON string of optimization metrics",
+                                        "type": "string",
+                                        "example": "{\\\"execution_time\\\":0.1,\\\"areas_utilized\\\":4}"
+                                    },
+                                    "waktu_selesai": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-18T20:15:31Z"
+                                    },
+                                    "log_error": {
+                                        "type": "string",
+                                        "example": "Error message if any",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Optimization log updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log optimasi berhasil diperbarui"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "selesai"
+                                                },
+                                                "waktu_selesai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T20:15:31.000000Z"
+                                                },
+                                                "hasil_optimasi": {
+                                                    "type": "object"
+                                                },
+                                                "metrik_hasil": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Optimization log not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Delete optimization log",
+                "description": "Deletes a specific optimization log and its related data",
+                "operationId": "deleteOptimizationLog",
+                "parameters": [
+                    {
+                        "name": "logOptimasi",
+                        "in": "path",
+                        "description": "Optimization log ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Optimization log deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log optimasi berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Optimization log not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/log-optimasi/statistics": {
+            "get": {
+                "tags": [
+                    "Log Optimasi"
+                ],
+                "summary": "Get optimization statistics",
+                "description": "Returns comprehensive statistics about optimization logs and performance",
+                "operationId": "getOptimizationStatistics",
+                "responses": {
+                    "200": {
+                        "description": "Optimization statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik optimasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_optimasi": {
+                                                    "description": "Total number of optimizations",
+                                                    "type": "integer",
+                                                    "example": 16
+                                                },
+                                                "optimasi_berhasil": {
+                                                    "description": "Number of successful optimizations",
+                                                    "type": "integer",
+                                                    "example": 14
+                                                },
+                                                "optimasi_gagal": {
+                                                    "description": "Number of failed optimizations",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "optimasi_berjalan": {
+                                                    "description": "Number of running optimizations",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "algoritma_populer": {
+                                                    "description": "Most popular algorithms",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "algoritma": {
+                                                                "type": "string",
+                                                                "example": "Simulated Annealing"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 16
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "rata_rata_waktu": {
+                                                    "description": "Average execution time in seconds",
+                                                    "type": "number",
+                                                    "example": 0.15,
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/optimization/simulated-annealing": {
+            "post": {
+                "tags": [
+                    "Warehouse Space Optimization"
+                ],
+                "summary": "Optimize warehouse space utilization using Simulated Annealing",
+                "description": "Executes warehouse space optimization synchronously and returns immediate results with optimal item placement recommendations",
+                "operationId": "runSimulatedAnnealing",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "gudang_ids": {
+                                        "description": "IDs gudang yang akan dioptimasi",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1
+                                        ]
+                                    },
+                                    "barang_ids": {
+                                        "description": "IDs barang yang akan ditempatkan",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3,
+                                            4,
+                                            5,
+                                            6
+                                        ]
+                                    },
+                                    "prioritas_optimasi": {
+                                        "description": "Prioritas optimasi ruang",
+                                        "type": "string",
+                                        "enum": [
+                                            "space_utilization",
+                                            "accessibility",
+                                            "balanced"
+                                        ],
+                                        "example": "balanced"
+                                    },
+                                    "target_utilisasi": {
+                                        "description": "Target persentase utilisasi ruang (50-100%)",
+                                        "type": "number",
+                                        "example": 95
+                                    },
+                                    "keterangan": {
+                                        "description": "Keterangan tambahan",
+                                        "type": "string",
+                                        "example": "Test full optimization synchronous"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Optimization completed successfully with immediate results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Optimisasi penempatan barang di ruang gudang berhasil diselesaikan"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "log_optimasi_id": {
+                                                    "type": "integer",
+                                                    "example": 16
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "total_gudang": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_barang": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "prioritas_optimasi": {
+                                                    "type": "string",
+                                                    "example": "balanced"
+                                                },
+                                                "target_utilisasi": {
+                                                    "type": "number",
+                                                    "example": 95
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "selesai"
+                                                },
+                                                "waktu_mulai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18 13:22:12"
+                                                },
+                                                "waktu_selesai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18 20:22:12"
+                                                },
+                                                "hasil_optimasi": {
+                                                    "properties": {
+                                                        "algorithm": {
+                                                            "type": "string",
+                                                            "example": "Simulated Annealing"
+                                                        },
+                                                        "final_cost": {
+                                                            "type": "number",
+                                                            "example": 15147.807321860531
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 6
+                                                        },
+                                                        "areas_utilized": {
+                                                            "type": "integer",
+                                                            "example": 4
+                                                        },
+                                                        "execution_time": {
+                                                            "type": "number",
+                                                            "example": 0.1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "total_rekomendasi": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "waktu_eksekusi": {
+                                                    "type": "string",
+                                                    "example": "0.21s"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error - invalid parameters"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error or optimization failed"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/optimization/{logOptimasiId}/status": {
+            "get": {
+                "tags": [
+                    "Warehouse Optimization"
+                ],
+                "summary": "Get optimization status",
+                "description": "Returns current status and progress of a specific optimization process",
+                "operationId": "getOptimizationStatus",
+                "parameters": [
+                    {
+                        "name": "logOptimasiId",
+                        "in": "path",
+                        "description": "Log optimasi ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Optimization status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "log_optimasi_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "sedang_berjalan"
+                                                },
+                                                "waktu_mulai": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T10:05:21.000000Z"
+                                                },
+                                                "waktu_selesai": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "estimasi_waktu": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                },
+                                                "target_optimasi": {
+                                                    "type": "string",
+                                                    "example": "Full System Test"
+                                                },
+                                                "parameter_optimasi": {
+                                                    "properties": {
+                                                        "temperature_initial": {
+                                                            "type": "number",
+                                                            "example": 1200
+                                                        },
+                                                        "cooling_rate": {
+                                                            "type": "number",
+                                                            "example": 0.96
+                                                        },
+                                                        "max_iterations": {
+                                                            "type": "integer",
+                                                            "example": 800
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "progress_percentage": {
+                                                    "type": "number",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "recommendations_count": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "dapat_dibatalkan": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Optimization log not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/optimization/warehouse-state": {
+            "get": {
+                "tags": [
+                    "Warehouse Optimization"
+                ],
+                "summary": "Get current warehouse state",
+                "description": "Returns current state of warehouse including areas, items, and capacity information for optimization analysis",
+                "operationId": "getWarehouseState",
+                "responses": {
+                    "200": {
+                        "description": "Warehouse state retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_areas": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "total_capacity": {
+                                                    "type": "number",
+                                                    "example": 2002
+                                                },
+                                                "used_capacity": {
+                                                    "type": "number",
+                                                    "example": 0
+                                                },
+                                                "capacity_utilization": {
+                                                    "type": "number",
+                                                    "example": 0
+                                                },
+                                                "available_areas": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "areas_summary": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "kode_area": {
+                                                                "type": "string",
+                                                                "example": "A1-01"
+                                                            },
+                                                            "nama_area": {
+                                                                "type": "string",
+                                                                "example": "Area A1 - Rak Tinggi"
+                                                            },
+                                                            "kapasitas": {
+                                                                "type": "number",
+                                                                "example": 480
+                                                            },
+                                                            "kapasitas_terpakai": {
+                                                                "type": "number",
+                                                                "example": 0
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "items_summary": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "kode_barang": {
+                                                                "type": "string",
+                                                                "example": "ELK-001"
+                                                            },
+                                                            "nama_barang": {
+                                                                "type": "string",
+                                                                "example": "Laptop Gaming ASUS ROG"
+                                                            },
+                                                            "kategori": {
+                                                                "type": "string",
+                                                                "example": "Elektronik"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/optimization/algorithms": {
+            "get": {
+                "tags": [
+                    "Warehouse Optimization"
+                ],
+                "summary": "Get available optimization algorithms",
+                "description": "Returns list of available optimization algorithms with their parameters and descriptions",
+                "operationId": "getOptimizationAlgorithms",
+                "responses": {
+                    "200": {
+                        "description": "Available algorithms retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Algoritma optimasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "algorithms": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Simulated Annealing"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Algoritma optimasi metaheuristik"
+                                                            },
+                                                            "estimated_time": {
+                                                                "type": "string",
+                                                                "example": "3-10 menit"
+                                                            },
+                                                            "parameters": {
+                                                                "properties": {
+                                                                    "temperature_initial": {
+                                                                        "properties": {
+                                                                            "type": {
+                                                                                "type": "string",
+                                                                                "example": "float"
+                                                                            },
+                                                                            "min": {
+                                                                                "type": "number",
+                                                                                "example": 100
+                                                                            },
+                                                                            "max": {
+                                                                                "type": "number",
+                                                                                "example": 5000
+                                                                            },
+                                                                            "default": {
+                                                                                "type": "number",
+                                                                                "example": 1000
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "pros": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "example": "Dapat escape dari local optimum"
+                                                                }
+                                                            },
+                                                            "cons": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "example": "Membutuhkan tuning parameter"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/penempatan-barang": {
             "get": {
                 "tags": [
@@ -3709,6 +4899,900 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rekomendasi-penempatan": {
+            "get": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Get placement recommendations",
+                "description": "Returns paginated list of placement recommendations with filtering options",
+                "operationId": "getRecommendations",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by recommendation status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "menunggu",
+                                "disetujui",
+                                "ditolak"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "log_optimasi_id",
+                        "in": "query",
+                        "description": "Filter by optimization log ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "prioritas",
+                        "in": "query",
+                        "description": "Filter by priority level",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "tinggi",
+                                "sedang",
+                                "rendah"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recommendations retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rekomendasi penempatan berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "log_optimasi_id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "barang_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "area_gudang_rekomendasi": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "koordinat_x_spesifik": {
+                                                                "type": "number",
+                                                                "example": 42.69
+                                                            },
+                                                            "koordinat_y_spesifik": {
+                                                                "type": "number",
+                                                                "example": 10.01
+                                                            },
+                                                            "alasan": {
+                                                                "type": "string",
+                                                                "example": "Optimasi SA: Laptop Gaming optimal"
+                                                            },
+                                                            "confidence_score": {
+                                                                "type": "number",
+                                                                "example": 0.85
+                                                            },
+                                                            "algoritma": {
+                                                                "type": "string",
+                                                                "example": "Simulated Annealing"
+                                                            },
+                                                            "prioritas": {
+                                                                "type": "string",
+                                                                "example": "tinggi"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "menunggu"
+                                                            },
+                                                            "tanggal_persetujuan": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Store placement recommendations",
+                "description": "Creates multiple placement recommendations from optimization results",
+                "operationId": "storeRecommendations",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "log_optimasi_id",
+                                    "rekomendasi"
+                                ],
+                                "properties": {
+                                    "log_optimasi_id": {
+                                        "description": "ID log optimasi",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "rekomendasi": {
+                                        "description": "Array of recommendations",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "barang_id",
+                                                "area_gudang_rekomendasi",
+                                                "alasan"
+                                            ],
+                                            "properties": {
+                                                "barang_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "area_gudang_rekomendasi": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "koordinat_x_spesifik": {
+                                                    "type": "number",
+                                                    "example": 28.5
+                                                },
+                                                "koordinat_y_spesifik": {
+                                                    "type": "number",
+                                                    "example": 8.25
+                                                },
+                                                "alasan": {
+                                                    "type": "string",
+                                                    "example": "Optimal placement for efficiency"
+                                                },
+                                                "prioritas": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "rendah",
+                                                        "sedang",
+                                                        "tinggi"
+                                                    ],
+                                                    "example": "tinggi"
+                                                },
+                                                "confidence_score": {
+                                                    "type": "number",
+                                                    "example": 0.89
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Recommendations created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rekomendasi penempatan berhasil disimpan"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_rekomendasi": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "log_optimasi_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "rekomendasi": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "barang_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "menunggu"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "example": "2025-10-18T10:06:19.000000Z"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rekomendasi-penempatan/{rekomendasiPenempatan}": {
+            "get": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Get specific placement recommendation details",
+                "description": "Returns detailed information about a specific placement recommendation",
+                "operationId": "getRecommendationDetail",
+                "parameters": [
+                    {
+                        "name": "rekomendasiPenempatan",
+                        "in": "path",
+                        "description": "Recommendation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recommendation details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail rekomendasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "log_optimasi_id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "barang_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "koordinat_x_spesifik": {
+                                                    "type": "number",
+                                                    "example": 30.76
+                                                },
+                                                "koordinat_y_spesifik": {
+                                                    "type": "number",
+                                                    "example": 9.65
+                                                },
+                                                "alasan": {
+                                                    "type": "string",
+                                                    "example": "Optimasi SA: Dokumen Kontrak di Area B1 - Lantai"
+                                                },
+                                                "confidence_score": {
+                                                    "type": "number",
+                                                    "example": 0.85
+                                                },
+                                                "algoritma": {
+                                                    "type": "string",
+                                                    "example": "Simulated Annealing"
+                                                },
+                                                "prioritas": {
+                                                    "type": "string",
+                                                    "example": "sedang"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "menunggu"
+                                                },
+                                                "catatan": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "tanggal_persetujuan": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "barang": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "kode_barang": {
+                                                            "type": "string",
+                                                            "example": "DOK-001"
+                                                        },
+                                                        "nama_barang": {
+                                                            "type": "string",
+                                                            "example": "Dokumen Kontrak"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "area_gudang_rekomendasi": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "kode_area": {
+                                                            "type": "string",
+                                                            "example": "B1-01"
+                                                        },
+                                                        "nama_area": {
+                                                            "type": "string",
+                                                            "example": "Area B1 - Lantai"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recommendation not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Delete placement recommendation",
+                "description": "Deletes a specific placement recommendation",
+                "operationId": "deleteRecommendation",
+                "parameters": [
+                    {
+                        "name": "rekomendasiPenempatan",
+                        "in": "path",
+                        "description": "Recommendation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recommendation deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rekomendasi berhasil dihapus"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Recommendation not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rekomendasi-penempatan/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Update recommendation status",
+                "description": "Updates the status of a placement recommendation (approve, reject, etc.)",
+                "operationId": "updateRecommendationStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Recommendation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "description": "New status for the recommendation",
+                                        "type": "string",
+                                        "enum": [
+                                            "menunggu",
+                                            "disetujui",
+                                            "ditolak",
+                                            "diimplementasi"
+                                        ],
+                                        "example": "disetujui"
+                                    },
+                                    "catatan": {
+                                        "description": "Manager notes",
+                                        "type": "string",
+                                        "example": "Approved - optimal location"
+                                    },
+                                    "catatan_manager": {
+                                        "description": "Manager comments",
+                                        "type": "string",
+                                        "example": "Good placement for efficiency"
+                                    },
+                                    "target_penerapan": {
+                                        "description": "Target implementation date",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-10-25"
+                                    },
+                                    "disetujui_oleh": {
+                                        "description": "Approver user ID",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Status rekomendasi berhasil diperbarui"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "disetujui"
+                                                },
+                                                "tanggal_persetujuan": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T10:09:42.000000Z"
+                                                },
+                                                "disetujui_oleh": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "nama": {
+                                                            "type": "string",
+                                                            "example": "Supervisor NCS"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "supervisor@ncs.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "barang": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "nama_barang": {
+                                                            "type": "string",
+                                                            "example": "Laptop Gaming ASUS ROG"
+                                                        },
+                                                        "kode_barang": {
+                                                            "type": "string",
+                                                            "example": "ELK-001"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "area_gudang_rekomendasi": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "kode_area": {
+                                                            "type": "string",
+                                                            "example": "B1-01"
+                                                        },
+                                                        "nama_area": {
+                                                            "type": "string",
+                                                            "example": "Area B1 - Lantai"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Recommendation not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rekomendasi-penempatan/bulk-approve": {
+            "post": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Bulk approve placement recommendations",
+                "description": "Approves multiple placement recommendations at once",
+                "operationId": "bulkApproveRecommendations",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rekomendasi_ids"
+                                ],
+                                "properties": {
+                                    "rekomendasi_ids": {
+                                        "description": "Array of recommendation IDs to approve",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 30
+                                        }
+                                    },
+                                    "catatan": {
+                                        "description": "Optional approval notes",
+                                        "type": "string",
+                                        "example": "Approved for implementation",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Recommendations approved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "6 rekomendasi berhasil disetujui"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "approved_count": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "catatan": {
+                                                    "type": "string",
+                                                    "example": "Approved for implementation",
+                                                    "nullable": true
+                                                },
+                                                "tanggal_persetujuan": {
+                                                    "type": "string",
+                                                    "example": "2025-10-18T20:25:30.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/rekomendasi-penempatan/statistics": {
+            "get": {
+                "tags": [
+                    "Rekomendasi Penempatan"
+                ],
+                "summary": "Get placement recommendations statistics",
+                "description": "Returns comprehensive statistics about placement recommendations",
+                "operationId": "getRecommendationStatistics",
+                "parameters": [
+                    {
+                        "name": "log_optimasi_id",
+                        "in": "query",
+                        "description": "Filter statistics by optimization log ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recommendation statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik rekomendasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_rekomendasi": {
+                                                    "description": "Total recommendations",
+                                                    "type": "integer",
+                                                    "example": 42
+                                                },
+                                                "menunggu": {
+                                                    "description": "Pending recommendations",
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "disetujui": {
+                                                    "description": "Approved recommendations",
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "ditolak": {
+                                                    "description": "Rejected recommendations",
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "diimplementasi": {
+                                                    "description": "Implemented recommendations",
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "tingkat_persetujuan": {
+                                                    "description": "Approval rate percentage",
+                                                    "type": "number",
+                                                    "example": 47.62
+                                                },
+                                                "rekomendasi_per_prioritas": {
+                                                    "description": "Recommendations by priority level",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "prioritas": {
+                                                                "type": "string",
+                                                                "example": "tinggi"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 15
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "rekomendasi_per_algoritma": {
+                                                    "description": "Recommendations by algorithm",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "algoritma": {
+                                                                "type": "string",
+                                                                "example": "Simulated Annealing"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 42
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 },
                 "security": [
@@ -4776,8 +6860,20 @@
             "description": "API endpoints untuk manajemen kategori barang"
         },
         {
+            "name": "Log Optimasi",
+            "description": "API endpoints for managing optimization logs and history"
+        },
+        {
+            "name": "Warehouse Optimization",
+            "description": "API endpoints for warehouse optimization using AI algorithms"
+        },
+        {
             "name": "Penempatan Barang",
             "description": "API endpoints untuk manajemen penempatan barang"
+        },
+        {
+            "name": "Rekomendasi Penempatan",
+            "description": "API endpoints for managing warehouse placement recommendations"
         },
         {
             "name": "Authentication",
@@ -4786,6 +6882,10 @@
         {
             "name": "Barang Management",
             "description": "Barang Management"
+        },
+        {
+            "name": "Warehouse Space Optimization",
+            "description": "Warehouse Space Optimization"
         },
         {
             "name": "Users",

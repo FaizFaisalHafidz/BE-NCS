@@ -8,8 +8,9 @@ use App\Http\Controllers\Api\AreaGudangController;
 use App\Http\Controllers\Api\KategoriBarangController;
 use App\Http\Controllers\Api\BarangController;
 use App\Http\Controllers\Api\PenempatanBarangController;
-// use App\Http\Controllers\Api\OptimizationController;
-// use App\Http\Controllers\Api\AnalyticsController;
+use App\Http\Controllers\Api\LogOptimasiController;
+use App\Http\Controllers\Api\RekomendasiPenempatanController;
+use App\Http\Controllers\Api\OptimizationController;
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -99,6 +100,36 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('{id}', [PenempatanBarangController::class, 'show']);
         Route::put('{id}', [PenempatanBarangController::class, 'update']);
         Route::delete('{id}', [PenempatanBarangController::class, 'destroy']);
+    });
+    
+    // Log Optimasi Management
+    Route::prefix('log-optimasi')->group(function () {
+        Route::get('/', [LogOptimasiController::class, 'index']);
+        Route::post('/', [LogOptimasiController::class, 'store']);
+        Route::get('statistics', [LogOptimasiController::class, 'statistics']);
+        Route::get('{logOptimasi}', [LogOptimasiController::class, 'show']);
+        Route::put('{logOptimasi}', [LogOptimasiController::class, 'update']);
+        Route::delete('{logOptimasi}', [LogOptimasiController::class, 'destroy']);
+    });
+    
+    // Rekomendasi Penempatan Management
+    Route::prefix('rekomendasi-penempatan')->group(function () {
+        Route::get('/', [RekomendasiPenempatanController::class, 'index']);
+        Route::post('/', [RekomendasiPenempatanController::class, 'store']);
+        Route::get('statistics', [RekomendasiPenempatanController::class, 'statistics']);
+        Route::post('bulk-approve', [RekomendasiPenempatanController::class, 'bulkApprove']);
+        Route::get('{rekomendasiPenempatan}', [RekomendasiPenempatanController::class, 'show']);
+        Route::patch('{rekomendasiPenempatan}/status', [RekomendasiPenempatanController::class, 'updateStatus']);
+        Route::delete('{rekomendasiPenempatan}', [RekomendasiPenempatanController::class, 'destroy']);
+    });
+    
+    // Warehouse Optimization
+    Route::prefix('optimization')->group(function () {
+        Route::get('algorithms', [OptimizationController::class, 'getAlgorithms']);
+        Route::get('warehouse-state', [OptimizationController::class, 'getWarehouseState']);
+        Route::post('simulated-annealing', [OptimizationController::class, 'runSimulatedAnnealing']);
+        Route::get('{logOptimasiId}/status', [OptimizationController::class, 'getOptimizationStatus']);
+        Route::post('{logOptimasiId}/cancel', [OptimizationController::class, 'cancelOptimization']);
     });
     
     // Optimization - COMING SOON

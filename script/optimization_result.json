@@ -1,0 +1,68 @@
+{
+  "algorithm": "Simulated Annealing",
+  "timestamp": "2025-10-18",
+  "total_items": 6,
+  "log_optimasi_id": 16,
+  "recommendations": [
+    {
+      "barang_id": 3,
+      "area_gudang_id": 2,
+      "koordinat_x": 55.48,
+      "koordinat_y": 27.22,
+      "alasan": "Optimasi SA: Dokumen Kontrak di Area A1 - Rak Sedang Updated",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    },
+    {
+      "barang_id": 1,
+      "area_gudang_id": 5,
+      "koordinat_x": 40.93,
+      "koordinat_y": 6.12,
+      "alasan": "Optimasi SA: Laptop Gaming ASUS ROG di Area C1 - Khusus Fragile",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    },
+    {
+      "barang_id": 6,
+      "area_gudang_id": 1,
+      "koordinat_x": 9.73,
+      "koordinat_y": 7.29,
+      "alasan": "Optimasi SA: Mouse Gaming Logitech di Area A1 - Rak Tinggi",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    },
+    {
+      "barang_id": 4,
+      "area_gudang_id": 3,
+      "koordinat_x": 35.5,
+      "koordinat_y": 5.77,
+      "alasan": "Optimasi SA: Keramik Artisan di Area B1 - Lantai",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    },
+    {
+      "barang_id": 5,
+      "area_gudang_id": 3,
+      "koordinat_x": 38.63,
+      "koordinat_y": 9.62,
+      "alasan": "Optimasi SA: Buku Novel di Area B1 - Lantai",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    },
+    {
+      "barang_id": 2,
+      "area_gudang_id": 1,
+      "koordinat_x": 13.54,
+      "koordinat_y": 8.68,
+      "alasan": "Optimasi SA: Paket Express Jakarta di Area A1 - Rak Tinggi",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 16
+    }
+  ]
+}

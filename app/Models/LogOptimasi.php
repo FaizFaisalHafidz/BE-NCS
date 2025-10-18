@@ -25,6 +25,17 @@ class LogOptimasi extends Model
         'status',
         'detail_hasil',
         'dijalankan_oleh',
+        // New fields for optimization system
+        'algoritma',
+        'parameter_optimasi',
+        'target_optimasi',
+        'estimasi_waktu',
+        'waktu_mulai',
+        'waktu_selesai',
+        'hasil_optimasi',
+        'metrik_hasil',
+        'log_error',
+        'dibuat_oleh'
     ];
 
     protected $casts = [
@@ -36,12 +47,22 @@ class LogOptimasi extends Model
         'persentase_perbaikan' => 'decimal:2',
         'waktu_eksekusi' => 'decimal:2',
         'detail_hasil' => 'array',
+        'parameter_optimasi' => 'array',
+        'hasil_optimasi' => 'array',
+        'metrik_hasil' => 'array',
+        'waktu_mulai' => 'datetime',
+        'waktu_selesai' => 'datetime',
     ];
 
     // Relationships
     public function gudang()
     {
         return $this->belongsTo(Gudang::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'dibuat_oleh');
     }
 
     public function dijalankanOleh()
@@ -51,7 +72,7 @@ class LogOptimasi extends Model
 
     public function rekomendasiPenempatan()
     {
-        return $this->hasMany(RekomendasiPenempatan::class);
+        return $this->hasMany(RekomendasiPenempatan::class, 'log_optimasi_id');
     }
 
     // Scopes

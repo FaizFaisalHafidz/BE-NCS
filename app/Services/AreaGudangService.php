@@ -354,7 +354,8 @@ class AreaGudangService
         }
 
         if ($query->exists()) {
-            throw new Exception('Koordinat area tumpang tindih dengan area yang sudah ada');
+            $conflictArea = $query->first();
+            throw new Exception("Koordinat area tumpang tindih dengan area '{$conflictArea->kode_area}' - {$conflictArea->nama_area} pada koordinat ({$conflictArea->koordinat_x}, {$conflictArea->koordinat_y})");
         }
     }
 }
