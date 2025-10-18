@@ -536,16 +536,16 @@ class OptimizationController extends Controller
         try {
             $startTime = microtime(true);
             
-            // Jalankan Python script secara synchronous
-            $scriptPath = base_path('script');
-            $pythonScript = 'warehouse_optimization.py';
+            // Gunakan environment variables untuk path Python (production-ready)
+            $pythonPath = env('PYTHON_VENV_PATH', base_path('script/venv/bin/python'));
+            $scriptPath = env('PYTHON_SCRIPT_PATH', base_path('script/warehouse_optimization.py'));
             $paramsJson = json_encode($parameters);
             
-            // Command yang lebih sederhana dan reliable
+            // Command yang lebih sederhana dan reliable dengan absolute paths
             $command = sprintf(
-                'cd %s && source venv/bin/activate && python %s --log-id=%d --params=%s 2>&1',
+                '%s %s --log-id=%d --params=%s 2>&1',
+                escapeshellarg($pythonPath),
                 escapeshellarg($scriptPath),
-                escapeshellarg($pythonScript),
                 $logOptimasiId,
                 escapeshellarg($paramsJson)
             );
