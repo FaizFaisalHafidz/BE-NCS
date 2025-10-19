@@ -20,8 +20,8 @@ DB_USERNAME=thoriq_user
 DB_PASSWORD=your_secure_password
 
 # Python Script Configuration (Production Paths)
-PYTHON_VENV_PATH=/var/www/thoriq/venv/bin/python
-PYTHON_SCRIPT_PATH=/var/www/thoriq/script/warehouse_optimization.py
+PYTHON_VENV_PATH=/var/www/BE-NCS/script/venv/bin/python
+PYTHON_SCRIPT_PATH=/var/www/BE-NCS/script/warehouse_optimization.py
 ```
 
 ### 2. Server Setup Commands
@@ -37,48 +37,54 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y nginx mysql-server php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-curl php8.2-mbstring php8.2-zip php8.2-gd python3 python3-pip python3-venv git composer
 
 # Create project directory
-sudo mkdir -p /var/www/thoriq
-cd /var/www/thoriq
+sudo mkdir -p /var/www/BE-NCS
+cd /var/www/BE-NCS
 
 # Clone repository
 git clone https://github.com/FaizFaisalHafidz/BE-NCS.git .
 
 # Set proper ownership
-sudo chown -R www-data:www-data /var/www/thoriq
+sudo chown -R www-data:www-data /var/www/BE-NCS
 ```
 
 ### 3. Python Environment Setup
 
 ```bash
 # Navigate to project directory
-cd /var/www/thoriq
+cd /var/www/BE-NCS
 
-# Create Python virtual environment
+# Create Python virtual environment inside script directory
+cd script
 python3 -m venv venv
 
 # Activate virtual environment
 source venv/bin/activate
 
 # Install Python requirements
-pip install -r script/requirements.txt
+pip install -r requirements.txt
 
 # Test Python script
-cd script
 python warehouse_optimization.py --help
 
 # Deactivate virtual environment
 deactivate
 
+# Navigate back to project root
+cd /var/www/BE-NCS
+
 # Set executable permissions
-sudo chmod +x /var/www/thoriq/venv/bin/python
-sudo chmod +x /var/www/thoriq/script/warehouse_optimization.py
+sudo chmod +x script/venv/bin/python
+sudo chmod +x script/warehouse_optimization.py
 ```
 
 ### 4. Laravel Setup
 
 ```bash
+# Laravel Setup
+
+```bash
 # Install Composer dependencies
-cd /var/www/thoriq
+cd /var/www/BE-NCS
 composer install --no-dev --optimize-autoloader
 
 # Copy and configure environment file
@@ -104,17 +110,17 @@ php artisan view:cache
 php artisan l5-swagger:generate
 
 # Set proper permissions
-sudo chown -R www-data:www-data /var/www/thoriq
-sudo chmod -R 755 /var/www/thoriq
-sudo chmod -R 775 /var/www/thoriq/storage
-sudo chmod -R 775 /var/www/thoriq/bootstrap/cache
+sudo chown -R www-data:www-data /var/www/BE-NCS
+sudo chmod -R 755 /var/www/BE-NCS
+sudo chmod -R 775 /var/www/BE-NCS/storage
+sudo chmod -R 775 /var/www/BE-NCS/bootstrap/cache
 ```
 
 ### 5. Nginx Configuration
 
 ```bash
 # Create Nginx site configuration
-sudo nano /etc/nginx/sites-available/thoriq
+sudo nano /etc/nginx/sites-available/BE-NCS
 
 # Add this configuration:
 ```
@@ -123,7 +129,7 @@ sudo nano /etc/nginx/sites-available/thoriq
 server {
     listen 80;
     server_name your-domain.com;
-    root /var/www/thoriq/public;
+    root /var/www/BE-NCS/public;
 
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-Content-Type-Options "nosniff";
@@ -156,7 +162,7 @@ server {
 
 ```bash
 # Enable site and restart services
-sudo ln -s /etc/nginx/sites-available/thoriq /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/BE-NCS /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 sudo systemctl restart php8.2-fpm
@@ -166,13 +172,13 @@ sudo systemctl restart php8.2-fpm
 
 ```bash
 # Test Python script with absolute path
-/var/www/thoriq/venv/bin/python /var/www/thoriq/script/warehouse_optimization.py --log-id 1 --params '{"gudang_ids":[1],"barang_ids":[1,2,3]}'
+/var/www/BE-NCS/script/venv/bin/python /var/www/BE-NCS/script/warehouse_optimization.py --log-id 1 --params '{"gudang_ids":[1],"barang_ids":[1,2,3]}'
 
 # Test Laravel application
 curl http://your-domain.com/api/optimization/algorithms
 
 # Check logs
-tail -f /var/www/thoriq/storage/logs/laravel.log
+tail -f /var/www/BE-NCS/storage/logs/laravel.log
 sudo tail -f /var/log/nginx/error.log
 ```
 
