@@ -624,6 +624,26 @@ class OptimizationController extends Controller
     }
 
     /**
+     * Debug method untuk check Python paths
+     */
+    public function debugPythonPaths()
+    {
+        return response()->json([
+            'PYTHON_VENV_PATH' => env('PYTHON_VENV_PATH'),
+            'PYTHON_SCRIPT_PATH' => env('PYTHON_SCRIPT_PATH'),
+            'base_path_venv' => base_path('script/venv/bin/python'),
+            'base_path_script' => base_path('script/warehouse_optimization.py'),
+            'file_exists_venv' => file_exists(env('PYTHON_VENV_PATH', base_path('script/venv/bin/python'))),
+            'file_exists_script' => file_exists(env('PYTHON_SCRIPT_PATH', base_path('script/warehouse_optimization.py'))),
+            'working_directory' => getcwd(),
+            'php_user' => get_current_user(),
+            'all_env' => array_filter($_ENV, function($key) {
+                return strpos($key, 'PYTHON') !== false;
+            }, ARRAY_FILTER_USE_KEY)
+        ]);
+    }
+
+    /**
      * Calculate optimization progress
      */
     private function calculateProgress($logOptimasi): int

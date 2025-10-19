@@ -130,6 +130,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('simulated-annealing', [OptimizationController::class, 'runSimulatedAnnealing']);
         Route::get('{logOptimasiId}/status', [OptimizationController::class, 'getOptimizationStatus']);
         Route::post('{logOptimasiId}/cancel', [OptimizationController::class, 'cancelOptimization']);
+        
+        // Debug route
+        Route::get('debug-python', [OptimizationController::class, 'debugPythonPaths']);
     });
     
     // Optimization - COMING SOON
