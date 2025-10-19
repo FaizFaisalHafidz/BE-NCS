@@ -628,15 +628,36 @@ class OptimizationController extends Controller
      */
     public function debugPythonPaths()
     {
+        $pythonPath = env('PYTHON_VENV_PATH', base_path('script/venv/bin/python'));
+        $scriptPath = env('PYTHON_SCRIPT_PATH', base_path('script/warehouse_optimization.py'));
+        $testParams = json_encode(['test' => true]);
+        
+        $command = sprintf(
+            '%s %s --log-id=%d --params=%s 2>&1',
+            escapeshellarg($pythonPath),
+            escapeshellarg($scriptPath),
+            1,
+            escapeshellarg($testParams)
+        );
+        
+        // Test command execution
+        $output = [];
+        $return_var = 0;
+        exec($command, $output, $return_var);
+        
         return response()->json([
             'PYTHON_VENV_PATH' => env('PYTHON_VENV_PATH'),
             'PYTHON_SCRIPT_PATH' => env('PYTHON_SCRIPT_PATH'),
             'base_path_venv' => base_path('script/venv/bin/python'),
             'base_path_script' => base_path('script/warehouse_optimization.py'),
-            'file_exists_venv' => file_exists(env('PYTHON_VENV_PATH', base_path('script/venv/bin/python'))),
-            'file_exists_script' => file_exists(env('PYTHON_SCRIPT_PATH', base_path('script/warehouse_optimization.py'))),
+            'file_exists_venv' => file_exists($pythonPath),
+            'file_exists_script' => file_exists($scriptPath),
             'working_directory' => getcwd(),
             'php_user' => get_current_user(),
+            'test_command' => $command,
+            'test_output' => $output,
+            'test_return_code' => $return_var,
+            'test_output_string' => implode("\n", $output),
             'all_env' => array_filter($_ENV, function($key) {
                 return strpos($key, 'PYTHON') !== false;
             }, ARRAY_FILTER_USE_KEY)
