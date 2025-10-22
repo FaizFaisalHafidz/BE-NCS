@@ -12,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Tag(
@@ -541,6 +543,22 @@ class OptimizationController extends Controller
             $scriptPath = env('PYTHON_SCRIPT_PATH', base_path('script/warehouse_optimization.py'));
             $paramsJson = json_encode($parameters);
             
+            // Validate Python environment before execution
+            if (!file_exists($pythonPath)) {
+                throw new \Exception("Python executable not found at: {$pythonPath}. Please check PYTHON_VENV_PATH in .env");
+            }
+            
+            if (!file_exists($scriptPath)) {
+                throw new \Exception("Python script not found at: {$scriptPath}. Please check PYTHON_SCRIPT_PATH in .env");
+            }
+            
+            // Test database connection first
+            try {
+                DB::connection()->getPdo();
+            } catch (\Exception $e) {
+                throw new \Exception("Database connection failed: " . $e->getMessage());
+            }
+            
             // Command yang lebih sederhana dan reliable dengan absolute paths
             $command = sprintf(
                 '%s %s --log-id=%d --params=%s 2>&1',
@@ -549,6 +567,14 @@ class OptimizationController extends Controller
                 $logOptimasiId,
                 escapeshellarg($paramsJson)
             );
+
+            // Log command untuk debugging
+            Log::info("Executing optimization command", [
+                'command' => $command,
+                'python_path' => $pythonPath,
+                'script_path' => $scriptPath,
+                'log_id' => $logOptimasiId
+            ]);
 
             // Execute dengan timeout menggunakan exec
             $output = [];
