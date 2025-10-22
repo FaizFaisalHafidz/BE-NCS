@@ -141,40 +141,57 @@ class WarehouseOptimizer:
     def fetch_barang(self) -> bool:
         """Mengambil data barang dari database dengan filter"""
         try:
+            print(f"🔍 Fetching barang data with filter: {self.barang_ids}")
             barang_data = self.db.fetch_barang()
+            print(f"📋 Raw barang data count: {len(barang_data)}")
+            
             self.barang_list = []
             
-            for item_data in barang_data:
-                # Filter berdasarkan barang_ids jika ada
-                if self.barang_ids and item_data['id'] not in self.barang_ids:
+            for i, item_data in enumerate(barang_data):
+                try:
+                    # Filter berdasarkan barang_ids jika ada
+                    if self.barang_ids and item_data['id'] not in self.barang_ids:
+                        continue
+                    
+                    print(f"📦 Processing item {i+1}: {item_data.get('nama_barang', 'Unknown')} (ID: {item_data.get('id')})")
+                    
+                    # Hitung volume dari dimensi barang
+                    panjang = float(item_data.get('panjang', 1.0))
+                    lebar = float(item_data.get('lebar', 1.0))
+                    tinggi = float(item_data.get('tinggi', 1.0))
+                    volume = panjang * lebar * tinggi
+                    
+                    print(f"   📏 Dimensions: {panjang}x{lebar}x{tinggi} = {volume}m³")
+                    
+                    # Set prioritas berdasarkan konfigurasi optimasi
+                    prioritas = self.get_item_priority(item_data)
+                    
+                    barang = Barang(
+                        id=item_data['id'],
+                        kode_barang=item_data['kode_barang'],
+                        nama_barang=item_data['nama_barang'],
+                        volume=volume,
+                        kategori_id=item_data['kategori_barang_id'],
+                        kategori_nama=item_data['nama_kategori'],
+                        frekuensi_akses=random.randint(1, 10),  # Simulasi frekuensi akses
+                        prioritas=prioritas
+                    )
+                    self.barang_list.append(barang)
+                    print(f"   ✅ Item processed successfully")
+                    
+                except Exception as item_error:
+                    print(f"❌ Error processing item {i+1}: {item_error}")
+                    print(f"   Item data: {item_data}")
                     continue
-                
-                # Hitung volume dari dimensi barang
-                panjang = float(item_data.get('panjang', 1.0))
-                lebar = float(item_data.get('lebar', 1.0))
-                tinggi = float(item_data.get('tinggi', 1.0))
-                volume = panjang * lebar * tinggi
-                
-                # Set prioritas berdasarkan konfigurasi optimasi
-                prioritas = self.get_item_priority(item_data)
-                
-                barang = Barang(
-                    id=item_data['id'],
-                    kode_barang=item_data['kode_barang'],
-                    nama_barang=item_data['nama_barang'],
-                    volume=volume,
-                    kategori_id=item_data['kategori_barang_id'],
-                    kategori_nama=item_data['nama_kategori'],
-                    frekuensi_akses=random.randint(1, 10),  # Simulasi frekuensi akses
-                    prioritas=prioritas
-                )
-                self.barang_list.append(barang)
             
             barang_filter = f" (filtered by barang_ids: {self.barang_ids})" if self.barang_ids else " (all items)"
             print(f"✅ Loaded {len(self.barang_list)} items from database{barang_filter}")
             return True
         except Exception as e:
             print(f"❌ Error fetching barang: {e}")
+            print(f"   Error type: {type(e).__name__}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def get_item_priority(self, item_data) -> int:
