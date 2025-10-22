@@ -502,6 +502,111 @@ class WarehouseOptimizer:
         
         return best_solution, best_cost
     
+    def generate_placement_reasoning(self, barang, area) -> str:
+        """
+        Generate detailed and contextual placement reasoning based on item and area characteristics
+        """
+        # Get area utilization data
+        area_utilization = (area.kapasitas_terpakai / area.kapasitas * 100) if area.kapasitas > 0 else 0
+        
+        # Analyze item characteristics - check if it's a dictionary or dataclass
+        if hasattr(barang, 'get'):  # Dictionary from database
+            item_volume = barang.get('volume', 0)
+            item_name = barang.get('nama_barang', 'Item')
+            category = barang.get('nama_kategori', 'Umum')
+        else:  # Dataclass object
+            item_volume = getattr(barang, 'volume', 0)
+            item_name = getattr(barang, 'nama_barang', 'Item')
+            category = getattr(barang, 'kategori_nama', 'Umum')
+        
+        # Analyze area characteristics - check if it's a dictionary or dataclass
+        if hasattr(area, 'get'):  # Dictionary from database
+            area_type = area.get('jenis_area', 'rak')
+            area_name = area.get('nama_area', 'Area')
+            is_high_access = area.get('koordinat_x', 100) <= 20 and area.get('koordinat_y', 100) <= 20
+            is_secure_area = area.get('tinggi', 0) >= 5
+            area_space_available = area.get('kapasitas', 0) - area.get('kapasitas_terpakai', 0)
+        else:  # Dataclass object
+            area_type = getattr(area, 'jenis_area', 'rak')
+            area_name = getattr(area, 'nama_area', 'Area')
+            is_high_access = area.koordinat_x <= 20 and area.koordinat_y <= 20
+            is_secure_area = area.tinggi >= 5
+            area_space_available = area.kapasitas - area.kapasitas_terpakai
+        
+        # Generate reasoning based on multiple factors
+        reasons = []
+        
+        # Factor 1: Category-based placement
+        if 'elektronik' in category.lower():
+            if area_type == 'rak' and is_secure_area:
+                reasons.append(f"barang elektronik ditempatkan di rak tinggi untuk keamanan dan proteksi dari kelembaban")
+            elif area_utilization < 50:
+                reasons.append(f"area dengan kapasitas tersedia {area_space_available:.1f}m³ cocok untuk barang elektronik sensitif")
+            else:
+                reasons.append(f"penempatan elektronik di area khusus untuk menghindari kerusakan dan gangguan")
+                
+        elif 'dokumen' in category.lower():
+            if area_type == 'lantai':
+                reasons.append(f"dokumen ditempatkan di area lantai karena mudah diakses dan tidak memerlukan rak khusus")
+            elif area_utilization < 70:
+                reasons.append(f"area dengan utilisasi {area_utilization:.1f}% memiliki ruang memadai untuk arsip dokumen")
+            else:
+                reasons.append(f"penempatan dokumen di area administratif untuk kemudahan akses dan organisasi")
+                
+        elif 'paket' in category.lower():
+            if is_high_access:
+                reasons.append(f"paket express ditempatkan dekat pintu masuk untuk memudahkan proses loading dan unloading")
+            elif area_utilization < 60:
+                reasons.append(f"area dengan kapasitas tersisa {area_space_available:.1f}m³ optimal untuk rotasi paket cepat")
+            else:
+                reasons.append(f"penempatan paket di area transit untuk mempercepat distribusi dan pengiriman")
+                
+        elif 'fragile' in category.lower():
+            if area_type == 'rak' and is_secure_area:
+                reasons.append(f"barang fragile ditempatkan di rak tinggi untuk proteksi maksimal dari benturan")
+            else:
+                reasons.append(f"penempatan khusus untuk barang mudah pecah dengan akses terbatas")
+        
+        # Factor 2: Space optimization
+        if area_utilization < 30:
+            reasons.append(f"optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi {area_utilization:.1f}%")
+        elif area_utilization > 80:
+            reasons.append(f"penempatan efisien pada area dengan utilisasi tinggi {area_utilization:.1f}%")
+        else:
+            reasons.append(f"pemanfaatan optimal ruang dengan tingkat utilisasi yang seimbang {area_utilization:.1f}%")
+            
+        # Factor 3: Item size considerations
+        if item_volume > 0.01:  # Large items (>10 liters)
+            tinggi_area = area.tinggi if hasattr(area, 'tinggi') else area.get('tinggi', 0)
+            if tinggi_area >= 4:
+                reasons.append(f"barang berukuran besar memerlukan area dengan tinggi memadai ({tinggi_area}m)")
+            else:
+                reasons.append(f"penempatan barang voluminous di area yang sesuai dengan dimensi produk")
+        elif item_volume > 0:
+            reasons.append(f"penempatan barang kompak untuk optimisasi density penyimpanan")
+        
+        # Factor 4: Access considerations
+        if is_high_access:
+            reasons.append(f"lokasi strategis dekat akses utama untuk operasional yang efisien")
+        
+        # Combine reasons into coherent explanation
+        if len(reasons) >= 2:
+            main_reason = reasons[0]
+            supporting_reason = reasons[1]
+            alasan = f"{item_name} ditempatkan di {area_name} karena {main_reason}, serta {supporting_reason}"
+        elif len(reasons) == 1:
+            alasan = f"{item_name} ditempatkan di {area_name} karena {reasons[0]}"
+        else:
+            # Fallback reasoning with area characteristics
+            if area_utilization < 50:
+                alasan = f"{item_name} ditempatkan di {area_name} untuk mengoptimalkan utilisasi ruang yang tersedia ({area_utilization:.1f}%)"
+            elif is_high_access:
+                alasan = f"{item_name} ditempatkan di {area_name} karena lokasi strategis dekat akses utama untuk operasional efisien"
+            else:
+                alasan = f"{item_name} ditempatkan di {area_name} berdasarkan analisis algoritma SA untuk konfigurasi optimal"
+            
+        return alasan
+    
     def save_solution_to_database(self, solution: List[PenempatanSolution]) -> bool:
         """
         Menyimpan solusi optimasi langsung ke database
@@ -514,12 +619,15 @@ class WarehouseOptimizer:
                 area = next((a for a in self.areas if a.id == placement.area_id), None)
                 
                 if barang and area:
+                    # Generate detailed reasoning based on item and area characteristics
+                    alasan = self.generate_placement_reasoning(barang, area)
+                    
                     recommendation = {
                         "barang_id": placement.barang_id,
                         "area_gudang_id": placement.area_id,
                         "koordinat_x": round(placement.koordinat_x, 2),
                         "koordinat_y": round(placement.koordinat_y, 2),
-                        "alasan": f"Optimasi SA: {barang.nama_barang} di {area.nama_area}",
+                        "alasan": alasan,
                         "confidence_score": 0.85,  # Score kepercayaan
                         "algoritma": "Simulated Annealing"
                     }

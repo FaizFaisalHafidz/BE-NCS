@@ -1,0 +1,68 @@
+{
+  "algorithm": "Simulated Annealing",
+  "timestamp": "2025-10-18",
+  "total_items": 6,
+  "log_optimasi_id": 21,
+  "recommendations": [
+    {
+      "barang_id": 3,
+      "area_gudang_id": 4,
+      "koordinat_x": 114.38,
+      "koordinat_y": -1.15,
+      "alasan": "Dokumen Kontrak ditempatkan di Area A2 - Rak Tinggi karena area dengan utilisasi 0.0% memiliki ruang memadai untuk arsip dokumen, serta optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    },
+    {
+      "barang_id": 1,
+      "area_gudang_id": 2,
+      "koordinat_x": 56.15,
+      "koordinat_y": 21.12,
+      "alasan": "Laptop Gaming ASUS ROG ditempatkan di Area A1 - Rak Sedang Updated karena area dengan kapasitas tersedia 400.0m\u00b3 cocok untuk barang elektronik sensitif, serta optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    },
+    {
+      "barang_id": 6,
+      "area_gudang_id": 1,
+      "koordinat_x": 9.38,
+      "koordinat_y": 5.0,
+      "alasan": "Mouse Gaming Logitech ditempatkan di Area A1 - Rak Tinggi karena barang elektronik ditempatkan di rak tinggi untuk keamanan dan proteksi dari kelembaban, serta optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    },
+    {
+      "barang_id": 4,
+      "area_gudang_id": 4,
+      "koordinat_x": 116.32,
+      "koordinat_y": 1.03,
+      "alasan": "Keramik Artisan ditempatkan di Area A2 - Rak Tinggi karena barang fragile ditempatkan di rak tinggi untuk proteksi maksimal dari benturan, serta optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    },
+    {
+      "barang_id": 5,
+      "area_gudang_id": 4,
+      "koordinat_x": 114.08,
+      "koordinat_y": -3.55,
+      "alasan": "Buku Novel ditempatkan di Area A2 - Rak Tinggi karena optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%, serta barang berukuran besar memerlukan area dengan tinggi memadai (6.0m)",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    },
+    {
+      "barang_id": 2,
+      "area_gudang_id": 1,
+      "koordinat_x": 11.86,
+      "koordinat_y": 6.35,
+      "alasan": "Paket Express Jakarta ditempatkan di Area A1 - Rak Tinggi karena paket express ditempatkan dekat pintu masuk untuk memudahkan proses loading dan unloading, serta optimisasi ruang kosong dengan memanfaatkan area yang hanya terisi 0.0%",
+      "confidence_score": 0.85,
+      "algoritma": "Simulated Annealing",
+      "log_optimasi_id": 21
+    }
+  ]
+}

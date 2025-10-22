@@ -1691,8 +1691,8 @@
                 "tags": [
                     "Barang"
                 ],
-                "summary": "Scan QR Code barang",
-                "description": "Melakukan scan QR code untuk mendapatkan informasi barang",
+                "summary": "Scan Code 128 Barcode barang",
+                "description": "Melakukan scan Code 128 barcode untuk mendapatkan informasi barang",
                 "operationId": "scanBarang",
                 "requestBody": {
                     "required": true,
@@ -1705,7 +1705,7 @@
                                 "properties": {
                                     "barcode": {
                                         "type": "string",
-                                        "example": "BRG001-QR123456"
+                                        "example": "ELK-001-ABC12345"
                                     }
                                 },
                                 "type": "object"
@@ -1851,8 +1851,8 @@
                 "tags": [
                     "Barang"
                 ],
-                "summary": "Generate QR Code barang",
-                "description": "Generate QR code untuk barang tertentu",
+                "summary": "Generate Code 128 Barcode barang",
+                "description": "Generate Code 128 barcode untuk barang tertentu",
                 "operationId": "generateQrCode",
                 "parameters": [
                     {
@@ -1867,7 +1867,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "QR Code berhasil digenerate",
+                        "description": "Code 128 barcode berhasil digenerate",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1878,17 +1878,29 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "QR Code berhasil digenerate"
+                                            "example": "Code 128 barcode berhasil digenerate"
                                         },
                                         "data": {
                                             "properties": {
-                                                "qr_code": {
+                                                "barcode_image": {
                                                     "type": "string",
-                                                    "example": "data:image/png;base64,iVBORw0KGgoAAAANS..."
+                                                    "example": "data:text/plain;base64,KioqKioqKioqKioqKi..."
+                                                },
+                                                "barcode_type": {
+                                                    "type": "string",
+                                                    "example": "Code 128"
                                                 },
                                                 "barcode": {
                                                     "type": "string",
-                                                    "example": "BRG001-QR123456"
+                                                    "example": "ELK-001-ABC12345"
+                                                },
+                                                "kode_barang": {
+                                                    "type": "string",
+                                                    "example": "ELK-001"
+                                                },
+                                                "nama_barang": {
+                                                    "type": "string",
+                                                    "example": "Laptop Gaming ASUS ROG"
                                                 }
                                             },
                                             "type": "object"

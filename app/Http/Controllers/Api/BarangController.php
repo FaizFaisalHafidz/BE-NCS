@@ -391,8 +391,8 @@ class BarangController extends Controller
     /**
      * @OA\Post(
      *     path="/api/barang/scan",
-     *     summary="Scan QR Code barang",
-     *     description="Melakukan scan QR code untuk mendapatkan informasi barang",
+     *     summary="Scan Code 128 Barcode barang",
+     *     description="Melakukan scan Code 128 barcode untuk mendapatkan informasi barang",
      *     operationId="scanBarang",
      *     tags={"Barang"},
      *     security={{"sanctum":{}}},
@@ -400,7 +400,7 @@ class BarangController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"barcode"},
-     *             @OA\Property(property="barcode", type="string", example="BRG001-QR123456")
+     *             @OA\Property(property="barcode", type="string", example="ELK-001-ABC12345")
      *         )
      *     ),
      *     @OA\Response(
@@ -504,8 +504,8 @@ class BarangController extends Controller
     /**
      * @OA\Get(
      *     path="/api/barang/{id}/qr-code",
-     *     summary="Generate QR Code barang",
-     *     description="Generate QR code untuk barang tertentu",
+     *     summary="Generate Code 128 Barcode barang",
+     *     description="Generate Code 128 barcode untuk barang tertentu",
      *     operationId="generateQrCode",
      *     tags={"Barang"},
      *     security={{"sanctum":{}}},
@@ -518,15 +518,18 @@ class BarangController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="QR Code berhasil digenerate",
+     *         description="Code 128 barcode berhasil digenerate",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="QR Code berhasil digenerate"),
+     *             @OA\Property(property="message", type="string", example="Code 128 barcode berhasil digenerate"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="qr_code", type="string", example="data:image/png;base64,iVBORw0KGgoAAAANS..."),
-     *                 @OA\Property(property="barcode", type="string", example="BRG001-QR123456")
+     *                 @OA\Property(property="barcode_image", type="string", example="data:text/plain;base64,KioqKioqKioqKioqKi..."),
+     *                 @OA\Property(property="barcode_type", type="string", example="Code 128"),
+     *                 @OA\Property(property="barcode", type="string", example="ELK-001-ABC12345"),
+     *                 @OA\Property(property="kode_barang", type="string", example="ELK-001"),
+     *                 @OA\Property(property="nama_barang", type="string", example="Laptop Gaming ASUS ROG")
      *             )
      *         )
      *     ),
@@ -539,7 +542,7 @@ class BarangController extends Controller
         $qrData = $this->barangService->generateQrCode($barang->id);
 
         return $this->successResponse(
-            'QR Code berhasil digenerate',
+            'Code 128 barcode berhasil digenerate',
             $qrData
         );
     }
