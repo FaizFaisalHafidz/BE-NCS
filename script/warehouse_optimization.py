@@ -659,18 +659,25 @@ class WarehouseOptimizer:
             success = self.db.save_optimization_results(recommendations)
             
             if success:
-                # Juga simpan ke file JSON untuk backup
-                output_file = "optimization_result.json"
-                with open(output_file, 'w') as f:
-                    json.dump({
-                        "algorithm": "Simulated Annealing",
-                        "timestamp": "2025-10-18",
-                        "total_items": len(recommendations),
-                        "log_optimasi_id": self.log_optimasi_id,
-                        "recommendations": recommendations
-                    }, f, indent=2)
+                print(f"💾 Saved {len(recommendations)} recommendations to database")
                 
-                print(f"✅ Solution saved to database and {output_file}")
+                # Coba simpan ke file JSON untuk backup (opsional)
+                try:
+                    output_file = "optimization_result.json"
+                    with open(output_file, 'w') as f:
+                        json.dump({
+                            "algorithm": "Simulated Annealing",
+                            "timestamp": "2025-10-18",
+                            "total_items": len(recommendations),
+                            "log_optimasi_id": self.log_optimasi_id,
+                            "recommendations": recommendations
+                        }, f, indent=2)
+                    print(f"📄 Backup saved to {output_file}")
+                except Exception as file_error:
+                    print(f"⚠️  Warning: Could not save backup file: {file_error}")
+                    # Don't fail the entire operation for file permission issues
+                
+                print(f"✅ Solution saved successfully")
                 return True
             else:
                 print("❌ Failed to save to database")
