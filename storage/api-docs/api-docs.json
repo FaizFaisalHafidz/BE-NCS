@@ -16,6 +16,485 @@
         }
     ],
     "paths": {
+        "/analytics/dashboard": {
+            "get": {
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Dashboard Analytics",
+                "description": "Mengambil data analytics dashboard dengan KPI utama sistem warehouse",
+                "operationId": "60d2bed1d73ca56b203b6e5ed729ca67",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Periode data (today, week, month, year)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "today",
+                                "week",
+                                "month",
+                                "year"
+                            ],
+                            "example": "month"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data dashboard berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data dashboard berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_gudang": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_area": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "total_barang": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "total_penempatan": {
+                                                    "type": "integer",
+                                                    "example": 120
+                                                },
+                                                "kapasitas_terpakai": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 75.5
+                                                },
+                                                "total_optimasi": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "optimasi_sukses": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "tingkat_keberhasilan": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 80
+                                                },
+                                                "aktivitas_terakhir": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "aksi": {
+                                                                "type": "string",
+                                                                "example": "create"
+                                                            },
+                                                            "deskripsi": {
+                                                                "type": "string",
+                                                                "example": "Menambahkan barang baru"
+                                                            },
+                                                            "user": {
+                                                                "type": "string",
+                                                                "example": "Admin User"
+                                                            },
+                                                            "waktu": {
+                                                                "type": "string",
+                                                                "example": "2 jam yang lalu"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "trend_bulanan": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "bulan": {
+                                                                "type": "string",
+                                                                "example": "2024-01"
+                                                            },
+                                                            "total_barang": {
+                                                                "type": "integer",
+                                                                "example": 145
+                                                            },
+                                                            "total_optimasi": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/analytics/utilization": {
+            "get": {
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Utilization Analytics",
+                "description": "Mengambil data utilisasi gudang dan area dengan persentase kapasitas terpakai",
+                "operationId": "f3ac1f98b0f1c1c4b5bc54e86e824321",
+                "parameters": [
+                    {
+                        "name": "gudang_id",
+                        "in": "query",
+                        "description": "ID gudang untuk filter data",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per",
+                        "in": "query",
+                        "description": "Grup data berdasarkan gudang atau area",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "gudang",
+                                "area"
+                            ],
+                            "example": "gudang"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data utilisasi berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data utilisasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "rata_rata_utilisasi": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 75.5
+                                                },
+                                                "total_kapasitas": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 1000
+                                                },
+                                                "kapasitas_terpakai": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 755
+                                                },
+                                                "detail_utilisasi": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "nama": {
+                                                                "type": "string",
+                                                                "example": "Gudang Utama"
+                                                            },
+                                                            "kapasitas_maksimal": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 500
+                                                            },
+                                                            "kapasitas_terpakai": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 375
+                                                            },
+                                                            "persentase_utilisasi": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 75
+                                                            },
+                                                            "jumlah_barang": {
+                                                                "type": "integer",
+                                                                "example": 45
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "Normal"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "statistik": {
+                                                    "properties": {
+                                                        "utilisasi_tertinggi": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 95
+                                                        },
+                                                        "utilisasi_terendah": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 45
+                                                        },
+                                                        "total_area_penuh": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "total_area_kosong": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/analytics/performance": {
+            "get": {
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Performance Analytics",
+                "description": "Mengambil data performa sistem termasuk throughput, rata-rata item per penempatan, dan statistik optimasi",
+                "operationId": "6ce913b36b9960cd31c18db76469f2a6",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Tanggal mulai filter data (format: Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Tanggal akhir filter data (format: Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    },
+                    {
+                        "name": "group",
+                        "in": "query",
+                        "description": "Grup data berdasarkan periode",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "day",
+                                "week",
+                                "month"
+                            ],
+                            "example": "month"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data performa berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data performa berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "rata_rata_penempatan_per_hari": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12.5
+                                                },
+                                                "rata_rata_item_per_penempatan": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 8.3
+                                                },
+                                                "total_optimasi": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "optimasi_berhasil": {
+                                                    "type": "integer",
+                                                    "example": 22
+                                                },
+                                                "tingkat_keberhasilan_optimasi": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 88
+                                                },
+                                                "rata_rata_waktu_optimasi": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 45.5
+                                                },
+                                                "trend_performa": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "periode": {
+                                                                "type": "string",
+                                                                "example": "2024-01"
+                                                            },
+                                                            "total_penempatan": {
+                                                                "type": "integer",
+                                                                "example": 120
+                                                            },
+                                                            "total_optimasi": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "tingkat_keberhasilan": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 80
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "top_pengguna": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "user_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "nama": {
+                                                                "type": "string",
+                                                                "example": "Admin User"
+                                                            },
+                                                            "total_aktivitas": {
+                                                                "type": "integer",
+                                                                "example": 150
+                                                            },
+                                                            "penempatan_dibuat": {
+                                                                "type": "integer",
+                                                                "example": 50
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "efisiensi_optimasi": {
+                                                    "properties": {
+                                                        "waktu_tercepat": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 15.2
+                                                        },
+                                                        "waktu_terlama": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 120.5
+                                                        },
+                                                        "total_penghematan_ruang": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 2500
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/area-gudang": {
             "get": {
                 "tags": [
@@ -1034,6 +1513,214 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Token tidak valid"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/update-profile": {
+            "put": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Update user profile",
+                "description": "Update profile data user yang sedang login",
+                "operationId": "9af798eca5a571b4fc93af5042e2a197",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe Updated"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john.updated@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Jl. Sudirman No. 123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile berhasil diupdate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Profile berhasil diupdate"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/change-password": {
+            "put": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Change user password",
+                "description": "Ubah password user yang sedang login",
+                "operationId": "4f3b37d88dcba49e338658cd7279041c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "oldpassword123"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password berhasil diubah",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password berhasil diubah"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Password lama tidak cocok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password lama tidak cocok"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -6886,6 +7573,10 @@
         {
             "name": "Rekomendasi Penempatan",
             "description": "API endpoints for managing warehouse placement recommendations"
+        },
+        {
+            "name": "Analytics",
+            "description": "Analytics"
         },
         {
             "name": "Authentication",

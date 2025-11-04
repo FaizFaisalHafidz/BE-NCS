@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use App\Http\Resources\UserResource;
+use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use OpenApi\Annotations as OA;
 
 /**
@@ -154,6 +157,8 @@ use OpenApi\Annotations as OA;
  */
 class AuthController extends Controller
 {
+    use LogsActivity;
+    
     protected $authService;
 
     public function __construct(AuthService $authService)
@@ -213,11 +218,21 @@ class AuthController extends Controller
             $result = $this->authService->login($request->validated());
 
             if (!$result['success']) {
+                // Log failed login attempt
+                $this->logSecurity(
+                    'login_failed',
+                    'Percobaan login gagal - ' . $result['message'],
+                    ['email' => $request->email]
+                );
+
                 return response()->json([
                     'success' => false,
                     'message' => $result['message']
                 ], 401);
             }
+
+            // Log successful login
+            $this->logLogin($result['user']->id);
 
             return response()->json([
                 'success' => true,
@@ -230,6 +245,13 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log login error
+            $this->logSecurity(
+                'login_error',
+                'Error sistem saat login',
+                ['error' => $e->getMessage(), 'email' => $request->email ?? 'unknown']
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem',
@@ -266,7 +288,12 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         try {
+            $userId = $request->user()->id;
+            
             $this->authService->logout($request->user());
+
+            // Log successful logout
+            $this->logLogout($userId);
 
             return response()->json([
                 'success' => true,
@@ -274,6 +301,13 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            // Log logout error
+            $this->logSecurity(
+                'logout_error',
+                'Error sistem saat logout',
+                ['error' => $e->getMessage()]
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem',
@@ -370,6 +404,220 @@ class AuthController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/auth/update-profile",
+     *     summary="Update user profile",
+     *     description="Update profile data user yang sedang login",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email"},
+     *             @OA\Property(property="name", type="string", example="John Doe Updated"),
+     *             @OA\Property(property="email", type="string", format="email", example="john.updated@example.com"),
+     *             @OA\Property(property="phone", type="string", example="081234567890"),
+     *             @OA\Property(property="address", type="string", example="Jl. Sudirman No. 123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile berhasil diupdate",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Profile berhasil diupdate"),
+     *             @OA\Property(property="data", ref="#/components/schemas/User")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validasi gagal"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:500',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $validatedData = $validator->validated();
+            $oldData = $user->only(['name', 'email', 'phone', 'address']);
+
+            // Update user data
+            $user->update($validatedData);
+
+            // Log update profile activity
+            $this->logUpdated(
+                'Mengupdate profile pengguna',
+                $user,
+                $oldData,
+                $validatedData
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile berhasil diupdate',
+                'data' => new UserResource($user->fresh())
+            ]);
+
+        } catch (\Exception $e) {
+            // Log update profile error
+            $this->logSecurity(
+                'update_profile_error',
+                'Error saat update profile',
+                ['error' => $e->getMessage()]
+            );
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/auth/change-password",
+     *     summary="Change user password",
+     *     description="Ubah password user yang sedang login",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"current_password", "new_password", "new_password_confirmation"},
+     *             @OA\Property(property="current_password", type="string", format="password", example="oldpassword123"),
+     *             @OA\Property(property="new_password", type="string", format="password", example="newpassword123"),
+     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="newpassword123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password berhasil diubah",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Password berhasil diubah")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Password lama tidak cocok",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Password lama tidak cocok")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validasi gagal"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:8|confirmed',
+                'new_password_confirmation' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Verify current password
+            if (!Hash::check($request->current_password, $user->password)) {
+                // Log failed password change attempt
+                $this->logSecurity(
+                    'change_password_failed',
+                    'Percobaan ubah password dengan password lama yang salah',
+                    ['user_id' => $user->id]
+                );
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password lama tidak cocok'
+                ], 400);
+            }
+
+            // Update password
+            $user->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            // Log successful password change
+            $this->logSecurity(
+                'change_password_success',
+                'Password berhasil diubah',
+                ['user_id' => $user->id]
+            );
+
+            // Optionally revoke all tokens to force re-login
+            if ($request->input('revoke_all_tokens', false)) {
+                $user->tokens()->delete();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Password berhasil diubah. Silakan login kembali',
+                    'revoked_tokens' => true
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password berhasil diubah'
+            ]);
+
+        } catch (\Exception $e) {
+            // Log change password error
+            $this->logSecurity(
+                'change_password_error',
+                'Error saat mengubah password',
+                ['error' => $e->getMessage()]
+            );
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan sistem',

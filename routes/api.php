@@ -9,8 +9,10 @@ use App\Http\Controllers\Api\KategoriBarangController;
 use App\Http\Controllers\Api\BarangController;
 use App\Http\Controllers\Api\PenempatanBarangController;
 use App\Http\Controllers\Api\LogOptimasiController;
+use App\Http\Controllers\Api\LogAktivitasController;
 use App\Http\Controllers\Api\RekomendasiPenempatanController;
 use App\Http\Controllers\Api\OptimizationController;
+use App\Http\Controllers\Api\AnalyticsController;
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -20,6 +22,8 @@ Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('refresh', [AuthController::class, 'refresh']);
         Route::get('me', [AuthController::class, 'me']);
+        Route::put('update-profile', [AuthController::class, 'updateProfile']);
+        Route::put('change-password', [AuthController::class, 'changePassword']);
     });
 });
 
@@ -112,6 +116,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{logOptimasi}', [LogOptimasiController::class, 'destroy']);
     });
     
+    // Log Aktivitas Management
+    Route::prefix('log-aktivitas')->group(function () {
+        Route::get('/', [LogAktivitasController::class, 'index']);
+        Route::post('/', [LogAktivitasController::class, 'store']);
+        Route::get('statistics', [LogAktivitasController::class, 'statistics']);
+        Route::get('my-activities', [LogAktivitasController::class, 'myActivities']);
+        Route::post('cleanup', [LogAktivitasController::class, 'cleanup']);
+        Route::post('export', [LogAktivitasController::class, 'export']);
+        Route::get('{logAktivitas}', [LogAktivitasController::class, 'show']);
+    });
+    
     // Rekomendasi Penempatan Management
     Route::prefix('rekomendasi-penempatan')->group(function () {
         Route::get('/', [RekomendasiPenempatanController::class, 'index']);
@@ -133,6 +148,13 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Debug route
         Route::get('debug-python', [OptimizationController::class, 'debugPythonPaths']);
+    });
+
+    // Analytics
+    Route::prefix('analytics')->group(function () {
+        Route::get('/', [AnalyticsController::class, 'dashboard']);
+        Route::get('utilization', [AnalyticsController::class, 'utilization']);
+        Route::get('performance', [AnalyticsController::class, 'performance']);
     });
     
     // Optimization - COMING SOON
