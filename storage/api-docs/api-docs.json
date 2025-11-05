@@ -3745,6 +3745,840 @@
                 ]
             }
         },
+        "/log-aktivitas": {
+            "get": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Get log aktivitas list",
+                "description": "Mengambil daftar log aktivitas dengan filtering dan pagination",
+                "operationId": "fee0b569fe4a42395ddf586ec23ff0e8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman (max: 100)",
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pencarian berdasarkan aksi atau deskripsi",
+                        "schema": {
+                            "type": "string",
+                            "example": "create"
+                        }
+                    },
+                    {
+                        "name": "aksi",
+                        "in": "query",
+                        "description": "Filter berdasarkan jenis aksi",
+                        "schema": {
+                            "type": "string",
+                            "example": "create"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan ID user",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Tanggal mulai (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Tanggal akhir (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    },
+                    {
+                        "name": "model_type",
+                        "in": "query",
+                        "description": "Filter berdasarkan tipe model",
+                        "schema": {
+                            "type": "string",
+                            "example": "App\\\\Models\\\\Barang"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data log aktivitas berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data log aktivitas berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/LogAktivitas"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "from": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "path": {
+                                                    "type": "string"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "to": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token tidak valid"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Create new log aktivitas",
+                "description": "Menambahkan log aktivitas baru ke sistem",
+                "operationId": "d4d3ef6a1a212659121f9b051a17e671",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "aksi",
+                                    "deskripsi"
+                                ],
+                                "properties": {
+                                    "aksi": {
+                                        "type": "string",
+                                        "maxLength": 50,
+                                        "example": "create"
+                                    },
+                                    "deskripsi": {
+                                        "type": "string",
+                                        "example": "Menambahkan barang baru dengan kode BRG001"
+                                    },
+                                    "model_type": {
+                                        "type": "string",
+                                        "example": "App\\\\Models\\\\Barang"
+                                    },
+                                    "model_id": {
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "data_lama": {
+                                        "type": "object",
+                                        "nullable": true
+                                    },
+                                    "data_baru": {
+                                        "type": "object",
+                                        "example": {
+                                            "kode_barang": "BRG001",
+                                            "nama_barang": "Laptop ASUS",
+                                            "kategori_id": 1
+                                        },
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Log aktivitas berhasil ditambahkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log aktivitas berhasil ditambahkan"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/LogAktivitas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/log-aktivitas/{id}": {
+            "get": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Get log aktivitas detail",
+                "description": "Mengambil detail log aktivitas berdasarkan ID",
+                "operationId": "63d11394d5f4187ce5416816af49f04f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID log aktivitas",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail log aktivitas berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail log aktivitas berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/LogAktivitas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Log aktivitas tidak ditemukan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log aktivitas tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/log-aktivitas/statistics": {
+            "get": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Get log aktivitas statistics",
+                "description": "Mengambil statistik log aktivitas sistem",
+                "operationId": "765216b1842aa05bb1e7397a6a76918c",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Tanggal mulai untuk filter statistik (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Tanggal akhir untuk filter statistik (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statistik log aktivitas berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Statistik log aktivitas berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_aktivitas": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "aktivitas_hari_ini": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "aktivitas_minggu_ini": {
+                                                    "type": "integer",
+                                                    "example": 89
+                                                },
+                                                "aktivitas_bulan_ini": {
+                                                    "type": "integer",
+                                                    "example": 134
+                                                },
+                                                "top_aksi": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "aksi": {
+                                                                "type": "string",
+                                                                "example": "create"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer",
+                                                                "example": 45
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "top_users": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "user_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Admin User"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer",
+                                                                "example": 89
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "aktivitas_per_hari": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "tanggal": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-01-15"
+                                                            },
+                                                            "jumlah": {
+                                                                "type": "integer",
+                                                                "example": 25
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/log-aktivitas/my-activities": {
+            "get": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Get current user activities",
+                "description": "Mengambil log aktivitas milik user yang sedang login",
+                "operationId": "e793b3a427fc65a5163426c094e18e29",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Nomor halaman",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman",
+                        "schema": {
+                            "type": "integer",
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "aksi",
+                        "in": "query",
+                        "description": "Filter berdasarkan jenis aksi",
+                        "schema": {
+                            "type": "string",
+                            "example": "create"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Tanggal mulai (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Tanggal akhir (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Data aktivitas user berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data aktivitas user berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/LogAktivitas"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/log-aktivitas/cleanup": {
+            "post": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Cleanup old log activities",
+                "description": "Membersihkan log aktivitas yang sudah lama untuk optimasi database",
+                "operationId": "e6505ddc8bd05c1ab31605220f5f48b5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "older_than_days"
+                                ],
+                                "properties": {
+                                    "older_than_days": {
+                                        "description": "Hapus log yang lebih lama dari jumlah hari ini (minimal 30 hari)",
+                                        "type": "integer",
+                                        "minimum": 30,
+                                        "example": 90
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Log aktivitas berhasil dibersihkan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Log aktivitas berhasil dibersihkan"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "deleted_count": {
+                                                    "type": "integer",
+                                                    "example": 45
+                                                },
+                                                "cutoff_date": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2023-10-15 00:00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/log-aktivitas/export": {
+            "post": {
+                "tags": [
+                    "Log Aktivitas"
+                ],
+                "summary": "Export log activities",
+                "description": "Mengekspor log aktivitas ke berbagai format file",
+                "operationId": "7414c2b060fd3a29e1c82c05fb740a05",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "format"
+                                ],
+                                "properties": {
+                                    "format": {
+                                        "description": "Format file export",
+                                        "type": "string",
+                                        "enum": [
+                                            "csv",
+                                            "excel",
+                                            "json"
+                                        ],
+                                        "example": "csv"
+                                    },
+                                    "start_date": {
+                                        "description": "Tanggal mulai untuk filter export",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-01"
+                                    },
+                                    "end_date": {
+                                        "description": "Tanggal akhir untuk filter export",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-31"
+                                    },
+                                    "aksi": {
+                                        "description": "Filter berdasarkan aksi tertentu",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "create",
+                                            "update"
+                                        ]
+                                    },
+                                    "user_id": {
+                                        "description": "Filter berdasarkan user ID tertentu",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Data log aktivitas berhasil diekspor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data log aktivitas berhasil diekspor"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "download_url": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/storage/exports/log_aktivitas_20240115.csv"
+                                                },
+                                                "file_size": {
+                                                    "type": "string",
+                                                    "example": "2.5 MB"
+                                                },
+                                                "total_records": {
+                                                    "type": "integer",
+                                                    "example": 1250
+                                                },
+                                                "generated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validasi gagal"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/log-optimasi": {
             "get": {
                 "tags": [
@@ -6501,6 +7335,465 @@
                 ]
             }
         },
+        "/reports/daily": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Daily Report",
+                "description": "Mengambil laporan harian aktivitas sistem warehouse",
+                "operationId": "ae89cd8c48b610889cd197f7a27d04ef",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Tanggal laporan (format: Y-m-d, default: hari ini)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-15"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan harian berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan harian berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DailyReport"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/weekly": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Weekly Report",
+                "description": "Mengambil laporan mingguan aktivitas sistem warehouse",
+                "operationId": "df127035150a2f32f4064bf71f77adac",
+                "parameters": [
+                    {
+                        "name": "week_start",
+                        "in": "query",
+                        "description": "Tanggal awal minggu (format: Y-m-d, default: awal minggu ini)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-08"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan mingguan berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan mingguan berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WeeklyReport"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/inventory": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Inventory Report",
+                "description": "Mengambil laporan inventory gudang dengan detail stock dan kategori",
+                "operationId": "5a6afaeadbe073790f777652a5f5be5f",
+                "parameters": [
+                    {
+                        "name": "warehouse_id",
+                        "in": "query",
+                        "description": "Filter berdasarkan ID gudang tertentu",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan inventory berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan inventory berhasil diambil"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/InventoryReport"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/team-performance": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Team Performance Report",
+                "description": "Mengambil laporan performa tim berdasarkan aktivitas dan produktivitas",
+                "operationId": "835a59f2dad48f6ffcd720cb5dd9d1ff",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Periode laporan (week, month, quarter, year)",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "week",
+                                "month",
+                                "quarter",
+                                "year"
+                            ],
+                            "example": "month"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Tanggal mulai custom period (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Tanggal akhir custom period (format: Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan performa tim berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan performa tim berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "period": {
+                                                    "type": "string"
+                                                },
+                                                "team_members": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "top_performers": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "activity_trends": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/warehouse-capacity": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Warehouse Capacity Report",
+                "description": "Mengambil laporan kapasitas gudang dan utilisasi ruang",
+                "operationId": "8b06dc1be2047eb6de7def1da6f5b81b",
+                "responses": {
+                    "200": {
+                        "description": "Laporan kapasitas gudang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan kapasitas gudang berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "warehouses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "overall_utilization": {
+                                                    "type": "number"
+                                                },
+                                                "capacity_alerts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/optimization": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Optimization Report",
+                "description": "Mengambil laporan optimasi sistem warehouse dengan algoritma Simulated Annealing",
+                "operationId": "b97be957da4050f875a9d24dc334c752",
+                "parameters": [
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "Periode laporan (week, month, quarter)",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "week",
+                                "month",
+                                "quarter"
+                            ],
+                            "example": "month"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan optimasi berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan optimasi berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "optimizations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "performance_metrics": {
+                                                    "type": "object"
+                                                },
+                                                "algorithm_effectiveness": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/latest": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Latest Reports",
+                "description": "Mengambil laporan terbaru dari berbagai kategori",
+                "operationId": "b3439b3a076cffb1be07e8c160c0f0cf",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Jumlah laporan per kategori (default: 5)",
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan terbaru berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Laporan terbaru berhasil diambil"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "latest_activities": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "latest_optimizations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "recent_placements": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "alerts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -7531,6 +8824,174 @@
                     }
                 },
                 "type": "object"
+            },
+            "LogAktivitas": {
+                "title": "Log Aktivitas",
+                "description": "Model log aktivitas sistem",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "aksi": {
+                        "type": "string",
+                        "example": "create"
+                    },
+                    "deskripsi": {
+                        "type": "string",
+                        "example": "Menambahkan barang baru"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "model_type": {
+                        "type": "string",
+                        "example": "App\\\\Models\\\\Barang"
+                    },
+                    "model_id": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "data_lama": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "data_baru": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "formatted_date": {
+                        "type": "string",
+                        "example": "15 Januari 2024, 10:30"
+                    },
+                    "time_ago": {
+                        "type": "string",
+                        "example": "2 jam yang lalu"
+                    }
+                },
+                "type": "object"
+            },
+            "DailyReport": {
+                "title": "Daily Report",
+                "description": "Laporan harian sistem",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-15"
+                    },
+                    "total_activities": {
+                        "type": "integer",
+                        "example": 125
+                    },
+                    "total_optimizations": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "total_items_moved": {
+                        "type": "integer",
+                        "example": 45
+                    },
+                    "warehouse_utilization": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 85.5
+                    },
+                    "top_users": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "most_active_warehouse": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "WeeklyReport": {
+                "title": "Weekly Report",
+                "description": "Laporan mingguan sistem",
+                "properties": {
+                    "week_start": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "week_end": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "total_activities": {
+                        "type": "integer"
+                    },
+                    "activities_by_day": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "optimization_performance": {
+                        "type": "object"
+                    },
+                    "team_performance": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryReport": {
+                "title": "Inventory Report",
+                "description": "Laporan inventory gudang",
+                "properties": {
+                    "total_items": {
+                        "type": "integer",
+                        "example": 1250
+                    },
+                    "items_by_category": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "items_by_warehouse": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "low_stock_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "expired_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -7587,8 +9048,16 @@
             "description": "Barang Management"
         },
         {
+            "name": "Log Aktivitas",
+            "description": "Log Aktivitas"
+        },
+        {
             "name": "Warehouse Space Optimization",
             "description": "Warehouse Space Optimization"
+        },
+        {
+            "name": "Reports",
+            "description": "Reports"
         },
         {
             "name": "Users",

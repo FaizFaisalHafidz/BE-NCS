@@ -9,16 +9,128 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="LogAktivitas",
+ *     type="object",
+ *     title="Log Aktivitas",
+ *     description="Model log aktivitas sistem",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="aksi", type="string", example="create"),
+ *     @OA\Property(property="deskripsi", type="string", example="Menambahkan barang baru"),
+ *     @OA\Property(property="user_id", type="integer", example=1),
+ *     @OA\Property(property="model_type", type="string", example="App\\Models\\Barang"),
+ *     @OA\Property(property="model_id", type="integer", example=15),
+ *     @OA\Property(property="data_lama", type="object", nullable=true),
+ *     @OA\Property(property="data_baru", type="object", nullable=true),
+ *     @OA\Property(property="timestamp", type="string", format="date-time"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="user", ref="#/components/schemas/User"),
+ *     @OA\Property(property="formatted_date", type="string", example="15 Januari 2024, 10:30"),
+ *     @OA\Property(property="time_ago", type="string", example="2 jam yang lalu")
+ * )
+ */
 
 class LogAktivitasController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/log-aktivitas",
+     *     summary="Get log aktivitas list",
+     *     description="Mengambil daftar log aktivitas dengan filtering dan pagination",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Nomor halaman",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query", 
+     *         description="Jumlah data per halaman (max: 100)",
+     *         @OA\Schema(type="integer", example=15)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Pencarian berdasarkan aksi atau deskripsi",
+     *         @OA\Schema(type="string", example="create")
+     *     ),
+     *     @OA\Parameter(
+     *         name="aksi",
+     *         in="query",
+     *         description="Filter berdasarkan jenis aksi",
+     *         @OA\Schema(type="string", example="create")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="query",
+     *         description="Filter berdasarkan ID user", 
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Tanggal mulai (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="Tanggal akhir (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-31")
+     *     ),
+     *     @OA\Parameter(
+     *         name="model_type",
+     *         in="query",
+     *         description="Filter berdasarkan tipe model",
+     *         @OA\Schema(type="string", example="App\\Models\\Barang")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data log aktivitas berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Data log aktivitas berhasil diambil"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/LogAktivitas")),
+     *                 @OA\Property(property="first_page_url", type="string"),
+     *                 @OA\Property(property="from", type="integer"),
+     *                 @OA\Property(property="last_page", type="integer"),
+     *                 @OA\Property(property="last_page_url", type="string"),
+     *                 @OA\Property(property="next_page_url", type="string", nullable=true),
+     *                 @OA\Property(property="path", type="string"),
+     *                 @OA\Property(property="per_page", type="integer"),
+     *                 @OA\Property(property="prev_page_url", type="string", nullable=true),
+     *                 @OA\Property(property="to", type="integer"),
+     *                 @OA\Property(property="total", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Token tidak valid")
+     *         )
+     *     )
+     * )
+     * 
      * Display a listing of log aktivitas.
      */
     public function index(Request $request): JsonResponse
     {
         try {
-            $query = LogAktivitas::with(['user:id,name,email'])
+            $query = LogAktivitas::with(['user:id,nama,email'])
                 ->orderBy('created_at', 'desc');
 
             // Filter by user
@@ -80,9 +192,9 @@ class LogAktivitasController extends Controller
                 return [
                     'id' => $log->id,
                     'user' => [
-                        'id' => $log->user?->id,
-                        'name' => $log->user?->name,
-                        'email' => $log->user?->email,
+                        'id' => $log->user ? $log->user->id : null,
+                        'name' => $log->user ? $log->user->name : null,
+                        'email' => $log->user ? $log->user->email : null,
                     ],
                     'aksi' => $log->aksi,
                     'aksi_formatted' => $log->aksi_formatted,
@@ -115,12 +227,44 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/log-aktivitas/{id}",
+     *     summary="Get log aktivitas detail",
+     *     description="Mengambil detail log aktivitas berdasarkan ID",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID log aktivitas",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detail log aktivitas berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Detail log aktivitas berhasil diambil"),
+     *             @OA\Property(property="data", ref="#/components/schemas/LogAktivitas")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Log aktivitas tidak ditemukan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Log aktivitas tidak ditemukan")
+     *         )
+     *     )
+     * )
+     * 
      * Display the specified log aktivitas.
      */
     public function show($id): JsonResponse
     {
         try {
-            $log = LogAktivitas::with(['user:id,name,email'])->find($id);
+            $log = LogAktivitas::with(['user:id,nama,email'])->find($id);
 
             if (!$log) {
                 return response()->json([
@@ -135,9 +279,9 @@ class LogAktivitasController extends Controller
                 'data' => [
                     'id' => $log->id,
                     'user' => [
-                        'id' => $log->user?->id,
-                        'name' => $log->user?->name,
-                        'email' => $log->user?->email,
+                        'id' => $log->user ? $log->user->id : null,
+                        'name' => $log->user ? $log->user->name : null,
+                        'email' => $log->user ? $log->user->email : null,
                     ],
                     'aksi' => $log->aksi,
                     'aksi_formatted' => $log->aksi_formatted,
@@ -164,6 +308,49 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/log-aktivitas",
+     *     summary="Create new log aktivitas",
+     *     description="Menambahkan log aktivitas baru ke sistem",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"aksi", "deskripsi"},
+     *             @OA\Property(property="aksi", type="string", maxLength=50, example="create"),
+     *             @OA\Property(property="deskripsi", type="string", example="Menambahkan barang baru dengan kode BRG001"),
+     *             @OA\Property(property="model_type", type="string", example="App\\Models\\Barang"),
+     *             @OA\Property(property="model_id", type="integer", example=15),
+     *             @OA\Property(property="data_lama", type="object", nullable=true),
+     *             @OA\Property(
+     *                 property="data_baru", 
+     *                 type="object", 
+     *                 nullable=true,
+     *                 example={"kode_barang": "BRG001", "nama_barang": "Laptop ASUS", "kategori_id": 1}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Log aktivitas berhasil ditambahkan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Log aktivitas berhasil ditambahkan"),
+     *             @OA\Property(property="data", ref="#/components/schemas/LogAktivitas")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validasi gagal"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     * 
      * Store a newly created log aktivitas.
      */
     public function store(Request $request): JsonResponse
@@ -212,6 +399,70 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/log-aktivitas/statistics",
+     *     summary="Get log aktivitas statistics",
+     *     description="Mengambil statistik log aktivitas sistem",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Tanggal mulai untuk filter statistik (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="Tanggal akhir untuk filter statistik (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-31")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statistik log aktivitas berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Statistik log aktivitas berhasil diambil"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="total_aktivitas", type="integer", example=150),
+     *                 @OA\Property(property="aktivitas_hari_ini", type="integer", example=25),
+     *                 @OA\Property(property="aktivitas_minggu_ini", type="integer", example=89),
+     *                 @OA\Property(property="aktivitas_bulan_ini", type="integer", example=134),
+     *                 @OA\Property(
+     *                     property="top_aksi",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="aksi", type="string", example="create"),
+     *                         @OA\Property(property="jumlah", type="integer", example=45)
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="top_users",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="user_id", type="integer", example=1),
+     *                         @OA\Property(property="name", type="string", example="Admin User"),
+     *                         @OA\Property(property="jumlah", type="integer", example=89)
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="aktivitas_per_hari",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="tanggal", type="string", format="date", example="2024-01-15"),
+     *                         @OA\Property(property="jumlah", type="integer", example=25)
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     * 
      * Get activity statistics.
      */
     public function statistics(Request $request): JsonResponse
@@ -247,7 +498,7 @@ class LogAktivitasController extends Controller
                 ->get();
 
             // Activities by user (top 10)
-            $activitiesByUser = $query->with(['user:id,name'])
+            $activitiesByUser = $query->with(['user:id,nama'])
                 ->selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
                 ->orderBy('total', 'desc')
@@ -256,7 +507,7 @@ class LogAktivitasController extends Controller
                 ->map(function ($item) {
                     return [
                         'user_id' => $item->user_id,
-                        'user_name' => $item->user?->name ?? 'Unknown',
+                        'user_name' => $item->user ? $item->user->nama : 'Unknown',
                         'total' => $item->total
                     ];
                 });
@@ -301,6 +552,60 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/log-aktivitas/my-activities",
+     *     summary="Get current user activities",
+     *     description="Mengambil log aktivitas milik user yang sedang login",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Nomor halaman",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query", 
+     *         description="Jumlah data per halaman",
+     *         @OA\Schema(type="integer", example=15)
+     *     ),
+     *     @OA\Parameter(
+     *         name="aksi",
+     *         in="query",
+     *         description="Filter berdasarkan jenis aksi",
+     *         @OA\Schema(type="string", example="create")
+     *     ),
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Tanggal mulai (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="Tanggal akhir (format: Y-m-d)",
+     *         @OA\Schema(type="string", format="date", example="2024-01-31")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data aktivitas user berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Data aktivitas user berhasil diambil"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/LogAktivitas")),
+     *                 @OA\Property(property="total", type="integer"),
+     *                 @OA\Property(property="per_page", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     * 
      * Get user's own activity log.
      */
     public function myActivities(Request $request): JsonResponse
@@ -359,6 +664,50 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/log-aktivitas/cleanup",
+     *     summary="Cleanup old log activities",
+     *     description="Membersihkan log aktivitas yang sudah lama untuk optimasi database",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"older_than_days"},
+     *             @OA\Property(
+     *                 property="older_than_days", 
+     *                 type="integer", 
+     *                 minimum=30,
+     *                 description="Hapus log yang lebih lama dari jumlah hari ini (minimal 30 hari)",
+     *                 example=90
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Log aktivitas berhasil dibersihkan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Log aktivitas berhasil dibersihkan"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="deleted_count", type="integer", example=45),
+     *                 @OA\Property(property="cutoff_date", type="string", format="date-time", example="2023-10-15 00:00:00")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validasi gagal"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     * 
      * Delete old log activities (cleanup).
      */
     public function cleanup(Request $request): JsonResponse
@@ -405,6 +754,80 @@ class LogAktivitasController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/log-aktivitas/export",
+     *     summary="Export log activities",
+     *     description="Mengekspor log aktivitas ke berbagai format file",
+     *     tags={"Log Aktivitas"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"format"},
+     *             @OA\Property(
+     *                 property="format", 
+     *                 type="string", 
+     *                 enum={"csv", "excel", "json"},
+     *                 description="Format file export",
+     *                 example="csv"
+     *             ),
+     *             @OA\Property(
+     *                 property="start_date", 
+     *                 type="string", 
+     *                 format="date",
+     *                 description="Tanggal mulai untuk filter export",
+     *                 example="2024-01-01"
+     *             ),
+     *             @OA\Property(
+     *                 property="end_date", 
+     *                 type="string", 
+     *                 format="date",
+     *                 description="Tanggal akhir untuk filter export",
+     *                 example="2024-01-31"
+     *             ),
+     *             @OA\Property(
+     *                 property="aksi", 
+     *                 type="array",
+     *                 @OA\Items(type="string"),
+     *                 description="Filter berdasarkan aksi tertentu",
+     *                 example={"create", "update"}
+     *             ),
+     *             @OA\Property(
+     *                 property="user_id", 
+     *                 type="array",
+     *                 @OA\Items(type="integer"),
+     *                 description="Filter berdasarkan user ID tertentu",
+     *                 example={1, 2}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data log aktivitas berhasil diekspor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Data log aktivitas berhasil diekspor"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="download_url", type="string", example="http://localhost/storage/exports/log_aktivitas_20240115.csv"),
+     *                 @OA\Property(property="file_size", type="string", example="2.5 MB"),
+     *                 @OA\Property(property="total_records", type="integer", example=1250),
+     *                 @OA\Property(property="generated_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validasi gagal"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     * 
      * Export activity logs.
      */
     public function export(Request $request): JsonResponse
@@ -426,7 +849,7 @@ class LogAktivitasController extends Controller
                 ], 422);
             }
 
-            $query = LogAktivitas::with(['user:id,name,email']);
+            $query = LogAktivitas::with(['user:id,nama,email']);
 
             // Apply filters
             if ($request->user_id) {
@@ -451,8 +874,8 @@ class LogAktivitasController extends Controller
             $exportData = $logs->map(function ($log) {
                 return [
                     'ID' => $log->id,
-                    'User' => $log->user?->name ?? 'Unknown',
-                    'Email' => $log->user?->email ?? '',
+                    'User' => ($log->user ? $log->user->name : null) ?? 'Unknown',
+                    'Email' => ($log->user ? $log->user->email : null) ?? '',
                     'Aksi' => $log->aksi_formatted,
                     'Deskripsi' => $log->deskripsi,
                     'Model Type' => $log->model_type,

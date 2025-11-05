@@ -10,20 +10,45 @@ use App\Http\Controllers\Api\BarangController;
 use App\Http\Controllers\Api\PenempatanBarangController;
 use App\Http\Controllers\Api\LogOptimasiController;
 use App\Http\Controllers\Api\LogAktivitasController;
+use App\Http\Controllers\Api\ReportsController;
 use App\Http\Controllers\Api\RekomendasiPenempatanController;
 use App\Http\Controllers\Api\OptimizationController;
 use App\Http\Controllers\Api\AnalyticsController;
 
-// Authentication Routes
-Route::prefix('auth')->group(function () {
+// Auth routes
+Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth:sanctum');
+    Route::put('update-profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+    Route::put('change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
+});
+
+// Protected routes with middleware
+Route::middleware(['auth:sanctum', 'auto.log.activity'])->group(function () {
+    // Current user info
+    Route::get('/me', [AuthController::class, 'me']);
     
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::get('me', [AuthController::class, 'me']);
-        Route::put('update-profile', [AuthController::class, 'updateProfile']);
-        Route::put('change-password', [AuthController::class, 'changePassword']);
+    // Log Aktivitas routes
+    Route::group(['prefix' => 'log-aktivitas'], function () {
+        Route::get('/', [LogAktivitasController::class, 'index']);
+        Route::get('/statistics', [LogAktivitasController::class, 'statistics']);
+        Route::get('/my-activities', [LogAktivitasController::class, 'myActivities']);
+        Route::get('/export', [LogAktivitasController::class, 'export']);
+        Route::get('/{id}', [LogAktivitasController::class, 'show']);
+        Route::post('/', [LogAktivitasController::class, 'store']);
+        Route::delete('/cleanup', [LogAktivitasController::class, 'cleanup']);
+    });
+
+    // Reports routes
+    Route::group(['prefix' => 'reports'], function () {
+        Route::get('/daily', [ReportsController::class, 'dailyReport']);
+        Route::get('/weekly', [ReportsController::class, 'weeklyReport']);
+        Route::get('/inventory', [ReportsController::class, 'inventoryReport']);
+        Route::get('/team-performance', [ReportsController::class, 'teamPerformance']);
+        Route::get('/warehouse-capacity', [ReportsController::class, 'warehouseCapacity']);
+        Route::get('/optimization', [ReportsController::class, 'optimizationReport']);
+        Route::get('/latest', [ReportsController::class, 'latestReports']);
     });
 });
 
@@ -114,17 +139,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('{logOptimasi}', [LogOptimasiController::class, 'show']);
         Route::put('{logOptimasi}', [LogOptimasiController::class, 'update']);
         Route::delete('{logOptimasi}', [LogOptimasiController::class, 'destroy']);
-    });
-    
-    // Log Aktivitas Management
-    Route::prefix('log-aktivitas')->group(function () {
-        Route::get('/', [LogAktivitasController::class, 'index']);
-        Route::post('/', [LogAktivitasController::class, 'store']);
-        Route::get('statistics', [LogAktivitasController::class, 'statistics']);
-        Route::get('my-activities', [LogAktivitasController::class, 'myActivities']);
-        Route::post('cleanup', [LogAktivitasController::class, 'cleanup']);
-        Route::post('export', [LogAktivitasController::class, 'export']);
-        Route::get('{logAktivitas}', [LogAktivitasController::class, 'show']);
     });
     
     // Rekomendasi Penempatan Management
