@@ -25,7 +25,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 // Protected routes with middleware
-Route::middleware(['auth:sanctum', 'auto.log.activity'])->group(function () {
+Route::middleware(['auth:sanctum', 'auto_log'])->group(function () {
     // Current user info
     Route::get('/me', [AuthController::class, 'me']);
     
